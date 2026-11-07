@@ -1477,7 +1477,7 @@
 
     // 1. Photorealistic 3D Burger Mesh
     loadAlphaTexture('render_burger.jpg', (tex) => {
-      const geo = new THREE.PlaneGeometry(15.5, 15.5);
+      const geo = new THREE.PlaneGeometry(16, 16);
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -1485,9 +1485,9 @@
         depthWrite: false
       });
       meshBurger = new THREE.Mesh(geo, mat);
-      // Positioned strategically on the right behind the phone with glorious rim lighting
-      meshBurger.position.set(13.5, 2, 4);
-      meshBurger.rotation.set(-0.1, -0.25, 0.08);
+      // Positioned right beside/behind the phone mockup so it is completely visible and stunning
+      meshBurger.position.set(6.5, 2.5, 1);
+      meshBurger.rotation.set(-0.05, -0.15, 0.05);
       masterGroup.add(meshBurger);
     });
 
@@ -1501,8 +1501,8 @@
         depthWrite: false
       });
       meshPizza = new THREE.Mesh(geo, mat);
-      meshPizza.position.set(18.5, -7, 6);
-      meshPizza.rotation.set(0.15, -0.3, -0.15);
+      meshPizza.position.set(11.0, -7.0, 3);
+      meshPizza.rotation.set(0.1, -0.2, -0.1);
       masterGroup.add(meshPizza);
     });
 
@@ -1516,7 +1516,7 @@
         depthWrite: false
       });
       meshScooter = new THREE.Mesh(geo, mat);
-      meshScooter.position.set(35, -2, -10); // Hidden offscreen until Chapter 2
+      meshScooter.position.set(40, 0, -10); // Hidden offscreen until Chapter 2
       meshScooter.rotation.set(0.05, -0.2, 0.02);
       masterGroup.add(meshScooter);
     });
@@ -1531,7 +1531,7 @@
         depthWrite: false
       });
       meshHeart = new THREE.Mesh(geo, mat);
-      meshHeart.position.set(35, -4, -15); // Hidden offscreen until Chapter 3
+      meshHeart.position.set(40, 0, -15); // Hidden offscreen until Chapter 3
       meshHeart.rotation.set(0, 0, 0);
       masterGroup.add(meshHeart);
     });
@@ -1612,13 +1612,13 @@
       onEnter: () => {
         if (meshBurger) gsap.to(meshBurger.position, { x: 38, y: 15, z: -10, duration: 1.2, ease: "power2.out" });
         if (meshPizza) gsap.to(meshPizza.position, { x: 42, y: -18, z: -12, duration: 1.2, ease: "power2.out" });
-        if (meshScooter) gsap.to(meshScooter.position, { x: 13, y: 1, z: 5, duration: 1.2, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 6.5, y: 1.0, z: 2, duration: 1.2, ease: "power2.out" });
         if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: -5, z: -15, duration: 0.8 });
       },
       onLeaveBack: () => {
-        if (meshBurger) gsap.to(meshBurger.position, { x: 13.5, y: 2, z: 4, duration: 1.2, ease: "power2.out" });
-        if (meshPizza) gsap.to(meshPizza.position, { x: 18.5, y: -7, z: 6, duration: 1.2, ease: "power2.out" });
-        if (meshScooter) gsap.to(meshScooter.position, { x: 35, y: -2, z: -10, duration: 1.0, ease: "power2.out" });
+        if (meshBurger) gsap.to(meshBurger.position, { x: 6.5, y: 2.5, z: 1, duration: 1.2, ease: "power2.out" });
+        if (meshPizza) gsap.to(meshPizza.position, { x: 11.0, y: -7.0, z: 3, duration: 1.2, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 40, y: 0, z: -10, duration: 1.0, ease: "power2.out" });
       }
     });
 
@@ -1628,11 +1628,11 @@
       end: "bottom center",
       onEnter: () => {
         if (meshScooter) gsap.to(meshScooter.position, { x: -30, y: -10, z: -15, duration: 1.2, ease: "power2.out" });
-        if (meshHeart) gsap.to(meshHeart.position, { x: 13, y: 0, z: 6, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 6.5, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
       },
       onLeaveBack: () => {
-        if (meshScooter) gsap.to(meshScooter.position, { x: 13, y: 1, z: 5, duration: 1.2, ease: "power2.out" });
-        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: -5, z: -15, duration: 1.0, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 6.5, y: 1.0, z: 2, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: 0, z: -15, duration: 1.0, ease: "power2.out" });
       }
     });
 
@@ -1643,7 +1643,7 @@
         if (meshHeart) gsap.to(meshHeart.position, { x: 0, y: -20, z: -25, duration: 1.2 });
       },
       onLeaveBack: () => {
-        if (meshHeart) gsap.to(meshHeart.position, { x: 13, y: 0, z: 6, duration: 1.2 });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 6.5, y: 0.5, z: 2, duration: 1.2 });
       }
     });
 
