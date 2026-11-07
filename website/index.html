@@ -4,36 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#030408">
-  <title>Happido — Taste the City in Minutes</title>
+  <title>Happido — Taste the City in Minutes | Next-Gen 3D Delivery</title>
   <meta name="description" content="Happido brings the city's finest dining and fresh groceries directly to your doorstep in minutes with real-time 3D tracking.">
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Core Libraries: Three.js + GSAP + ScrollTrigger + Lenis Smooth Scrolling -->
+  <!-- Core 3D & Animation Frameworks -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
-  <!-- Modern Luxury Typefaces: Plus Jakarta Sans + Outfit -->
+  <!-- Luxury Editorial Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --bg: #030408;
-      --surface: rgba(14, 19, 32, 0.65);
-      --surface-hover: rgba(22, 30, 50, 0.85);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --card-border-glow: rgba(32, 138, 239, 0.5);
+      --surface: rgba(12, 17, 30, 0.65);
+      --surface-solid: #0A0E1A;
+      --surface-hover: rgba(22, 30, 52, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-glow: rgba(32, 138, 239, 0.45);
       --primary: #208AEF;
-      --primary-light: #60A5FA;
+      --primary-glow: rgba(32, 138, 239, 0.35);
       --accent: #FF5A36;
+      --accent-glow: rgba(255, 90, 54, 0.35);
       --emerald: #10B981;
+      --gold: #F59E0B;
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
-      --blur: blur(24px);
+      --blur: blur(28px);
     }
 
     * {
@@ -42,18 +45,76 @@
       box-sizing: border-box;
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
+      cursor: none; /* Custom fluid cursor */
     }
 
-    html.lenis {
-      height: auto;
-    }
-
-    body {
+    html, body {
       background-color: var(--bg);
       color: var(--text);
       overflow-x: hidden;
       position: relative;
       line-height: 1.6;
+    }
+
+    /* Custom Fluid Cursor */
+    .cursor-dot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s,
+                  background-color 0.3s;
+    }
+    .cursor-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #FFFFFF;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .cursor-active .cursor-ring {
+      width: 72px;
+      height: 72px;
+      border-color: var(--primary);
+      background-color: rgba(32, 138, 239, 0.15);
+      backdrop-filter: blur(4px);
+    }
+    .cursor-active .cursor-label {
+      opacity: 1;
+    }
+    .cursor-hover .cursor-ring {
+      width: 50px;
+      height: 50px;
+      border-color: #FFFFFF;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     /* Fixed Fullscreen 3D WebGL Canvas */
@@ -64,10 +125,10 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      pointer-events: none;
+      pointer-events: auto; /* Allow dragging & clicking 3D world */
     }
 
-    /* Cinematic Film Texture & Radial Vignette */
+    /* Film Grain & Cinematic Vignette */
     .film-grain {
       position: fixed;
       top: 0;
@@ -75,7 +136,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 999;
+      z-index: 900;
       opacity: 0.035;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
@@ -88,17 +149,17 @@
       height: 100%;
       pointer-events: none;
       z-index: 2;
-      background: radial-gradient(circle at center, transparent 35%, rgba(3, 4, 8, 0.85) 100%);
+      background: radial-gradient(circle at center, transparent 40%, rgba(3, 4, 8, 0.88) 100%);
     }
 
-    /* Top Glass Header */
+    /* Glass Header */
     .top-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 100;
-      padding: 18px 6%;
+      padding: 16px 5%;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -115,14 +176,14 @@
       color: var(--text);
     }
     .brand-wrap img {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(32, 138, 239, 0.4);
+      box-shadow: 0 0 24px var(--primary-glow);
     }
     .brand-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.45rem;
+      font-size: 1.55rem;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #FFFFFF;
@@ -132,11 +193,11 @@
       align-items: center;
       gap: 8px;
       background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      border: 1px solid rgba(16, 185, 129, 0.3);
       padding: 6px 14px;
       border-radius: 99px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--emerald);
     }
@@ -145,7 +206,12 @@
       height: 6px;
       border-radius: 50%;
       background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
     .header-nav {
       display: flex;
@@ -165,24 +231,94 @@
     .nav-cta-btn {
       background: #FFFFFF;
       color: #030408 !important;
-      padding: 8px 20px;
+      padding: 9px 22px;
       border-radius: 99px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-cta-btn:hover {
       background: var(--primary);
       color: #FFFFFF !important;
-      box-shadow: 0 0 24px rgba(32, 138, 239, 0.6);
+      box-shadow: 0 0 28px rgba(32, 138, 239, 0.7);
       transform: translateY(-2px);
     }
 
-    /* Fixed Lorenzo Style Floating HUD Indicator */
+    /* Lorenzo Lottici Technical HUD Overlays */
+    .hud-top-left {
+      position: fixed;
+      top: 86px;
+      left: 5vw;
+      z-index: 50;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+    }
+    .hud-top-left span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .hud-top-right {
+      position: fixed;
+      top: 86px;
+      right: 5vw;
+      z-index: 50;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .audio-btn {
+      background: rgba(14, 19, 32, 0.7);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+    .audio-btn:hover {
+      color: #FFFFFF;
+      border-color: var(--primary);
+    }
+    .audio-wave {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 10px;
+    }
+    .audio-wave span {
+      width: 2px;
+      background: var(--primary);
+      border-radius: 1px;
+      height: 4px;
+      transition: height 0.2s;
+    }
+    .audio-active .audio-wave span:nth-child(1) { animation: wave 0.8s infinite ease-in-out; }
+    .audio-active .audio-wave span:nth-child(2) { animation: wave 0.8s 0.2s infinite ease-in-out; }
+    .audio-active .audio-wave span:nth-child(3) { animation: wave 0.8s 0.4s infinite ease-in-out; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 12px; }
+    }
+
     .hud-left {
       position: fixed;
-      bottom: 28px;
-      left: 4vw;
+      bottom: 32px;
+      left: 5vw;
       z-index: 50;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
@@ -191,336 +327,471 @@
       text-transform: uppercase;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
+      pointer-events: none;
     }
     .hud-left span {
-      color: var(--primary-light);
-      font-weight: 700;
-    }
-    .hud-right {
-      position: fixed;
-      bottom: 28px;
-      right: 4vw;
-      z-index: 50;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 2px;
-      color: var(--primary-light);
+      color: var(--text);
       font-weight: 700;
     }
 
-    /* Content Canvas */
+    .hud-right {
+      position: fixed;
+      bottom: 32px;
+      right: 5vw;
+      z-index: 50;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .progress-circle-wrap {
+      width: 32px;
+      height: 32px;
+      transform: rotate(-90deg);
+    }
+    .progress-circle-bg {
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 3;
+      fill: none;
+    }
+    .progress-circle-bar {
+      stroke: var(--primary);
+      stroke-width: 3;
+      stroke-linecap: round;
+      fill: none;
+      stroke-dasharray: 88;
+      stroke-dashoffset: 88;
+      transition: stroke-dashoffset 0.1s;
+    }
+
+    /* Scrollable Container */
     .scroll-container {
       position: relative;
       z-index: 10;
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 0 6%;
     }
 
-    /* Section 1: Hero View */
+    /* Section 1: Hero Stage */
     .hero-stage {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      display: flex;
       align-items: center;
-      gap: 60px;
-      padding: 120px 0 80px;
+      justify-content: space-between;
+      padding: 130px 6% 80px;
+      position: relative;
+    }
+    .hero-content {
+      max-width: 620px;
+      z-index: 15;
     }
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 18px;
-      border-radius: 99px;
+      gap: 8px;
       background: rgba(32, 138, 239, 0.12);
       border: 1px solid rgba(32, 138, 239, 0.3);
-      color: var(--primary-light);
+      padding: 6px 14px;
+      border-radius: 99px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 26px;
+      letter-spacing: 1.2px;
+      color: var(--primary);
+      margin-bottom: 24px;
     }
     .hero-heading {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(3.6rem, 6.5vw, 6.2rem);
+      font-size: clamp(3rem, 6.2vw, 5.5rem);
       font-weight: 900;
       line-height: 1.05;
       letter-spacing: -2px;
+      margin-bottom: 24px;
       color: #FFFFFF;
-      margin-bottom: 26px;
     }
-    .hero-heading .blue-word {
-      background: linear-gradient(135deg, #60A5FA 0%, #208AEF 50%, #38BDF8 100%);
+    .blue-word {
+      background: linear-gradient(135deg, #60A5FA 0%, #208AEF 50%, #3B82F6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-    .hero-heading .orange-word {
-      background: linear-gradient(135deg, #FF6B4A 0%, #FFA07A 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
     .hero-desc {
-      font-size: 1.22rem;
+      font-size: clamp(1rem, 1.25vw, 1.2rem);
       color: var(--text-muted);
-      line-height: 1.7;
-      max-width: 540px;
-      margin-bottom: 40px;
-      font-weight: 400;
+      line-height: 1.65;
+      margin-bottom: 36px;
+      max-width: 520px;
     }
-
     .hero-actions {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 20px;
       flex-wrap: wrap;
     }
     .btn-google-play {
       display: inline-flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       background: #FFFFFF;
       color: #030408;
-      text-decoration: none;
       padding: 14px 28px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.95rem;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      letter-spacing: 0.2px;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 0 35px rgba(32, 138, 239, 0.35);
     }
     .btn-google-play:hover {
-      background: var(--primary);
-      color: #FFFFFF;
-      transform: translateY(-3px);
-      box-shadow: 0 0 50px rgba(32, 138, 239, 0.7);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 18px 40px rgba(32, 138, 239, 0.4);
     }
     .btn-google-play svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
     .btn-explore-text {
-      color: var(--text-muted);
+      color: var(--text);
       text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 0.92rem;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 14px 22px;
-      border-radius: 16px;
       transition: color 0.2s, transform 0.2s;
     }
     .btn-explore-text:hover {
-      color: #FFFFFF;
+      color: var(--primary);
       transform: translateX(4px);
     }
 
-    /* Hero Right: Real 3D Device Presentation */
+    /* 3D Tilted Device Showcase */
     .hero-device-wrapper {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      perspective: 1200px;
+      z-index: 15;
     }
     .device-phone {
       width: 320px;
       height: 640px;
-      background: #0E1322;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 48px;
+      background: #000000;
+      border-radius: 46px;
       padding: 12px;
-      box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), 0 0 60px rgba(32, 138, 239, 0.2);
+      border: 4px solid #1E293B;
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8),
+                  0 0 50px rgba(32, 138, 239, 0.2),
+                  inset 0 0 0 2px rgba(255, 255, 255, 0.15);
       position: relative;
       overflow: hidden;
-      transform: perspective(1000px) rotateY(-8deg) rotateX(4deg);
-      transition: transform 0.4s ease;
-    }
-    .device-phone:hover {
-      transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-8px);
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .device-notch {
       position: absolute;
-      top: 18px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
-      width: 90px;
-      height: 20px;
-      background: #0E1322;
-      border-radius: 12px;
-      z-index: 10;
+      width: 100px;
+      height: 22px;
+      background: #000000;
+      border-radius: 99px;
+      z-index: 30;
     }
     .device-screen-img {
       width: 100%;
       height: 100%;
-      border-radius: 38px;
       object-fit: cover;
+      border-radius: 36px;
       display: block;
     }
 
-    /* Floating Realtime Delivery Card */
+    /* Floating Real-time Telemetry Widgets */
     .floating-hud-widget {
       position: absolute;
       bottom: 40px;
-      left: -30px;
-      background: rgba(14, 20, 35, 0.85);
-      border: 1px solid var(--card-border-glow);
+      left: -40px;
+      background: rgba(14, 20, 34, 0.85);
+      border: 1px solid var(--card-border);
       backdrop-filter: var(--blur);
-      border-radius: 20px;
-      padding: 18px 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      -webkit-backdrop-filter: var(--blur);
+      padding: 14px 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
-      gap: 16px;
-      animation: floatWidget 5s ease-in-out infinite alternate;
-      z-index: 20;
+      gap: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      z-index: 25;
+      animation: floatWidget 4s infinite ease-in-out;
     }
     @keyframes floatWidget {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-12px); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
     .hud-icon-bubble {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
-      background: rgba(32, 138, 239, 0.2);
-      color: var(--primary-light);
+      background: linear-gradient(135deg, rgba(32, 138, 239, 0.2), rgba(32, 138, 239, 0.05));
+      border: 1px solid rgba(32, 138, 239, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
     }
     .hud-stat-bold {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      color: #FFFFFF;
-    }
-    .hud-stat-label {
-      font-size: 0.76rem;
-      color: var(--text-dim);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Section 2: Interactive Ecosystem Cards */
-    .section-view {
-      padding: 120px 0;
-      border-top: 1px solid var(--card-border);
-    }
-    .section-head {
-      margin-bottom: 70px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-    .sec-tag {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--primary-light);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    .sec-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: clamp(2.6rem, 5vw, 4.2rem);
-      font-weight: 800;
-      letter-spacing: -1.5px;
       color: #FFFFFF;
       line-height: 1.1;
     }
+    .hud-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
+    .interactive-3d-hint {
+      position: absolute;
+      bottom: -36px;
+      right: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .interactive-3d-hint span {
+      display: inline-block;
+      animation: spinHint 4s infinite linear;
+    }
+    @keyframes spinHint {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Common Section Styles */
+    .section-view {
+      min-height: 100vh;
+      padding: 140px 6%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 24px;
+    }
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .sec-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      color: #FFFFFF;
+    }
+
+    /* Section 2: Interactive 3D Orbiting Food Gallery */
+    .food-3d-feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 80px;
+    }
+    .food-spec-box {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 40px;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      transition: all 0.3s;
+    }
+    .food-spec-box:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 40px var(--primary-glow);
+    }
+    .food-chip-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .food-chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .food-spec-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      color: #FFFFFF;
+    }
+    .food-spec-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .food-spec-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 24px;
+    }
+    .spec-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .spec-lbl {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Section 3: Architecture Ecosystem Cards */
     .ecosystem-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      perspective: 1200px;
+      gap: 28px;
     }
     .eco-glass-card {
       background: var(--surface);
       border: 1px solid var(--card-border);
       border-radius: 28px;
-      padding: 44px 34px;
+      padding: 38px;
       backdrop-filter: var(--blur);
       -webkit-backdrop-filter: var(--blur);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 420px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
+      min-height: 380px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .eco-glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--card-border-glow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
     .eco-glass-card:hover {
-      background: var(--surface-hover);
-      border-color: var(--card-border-glow);
-      transform: translateY(-10px) rotateX(4deg) rotateY(-4deg);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(32, 138, 239, 0.2);
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
+                  0 0 35px var(--card-border-glow);
+    }
+    .eco-glass-card:hover::before {
+      opacity: 1;
     }
     .card-top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .card-badge-pill {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
     .pill-blue { background: rgba(32, 138, 239, 0.15); color: #60A5FA; border: 1px solid rgba(32, 138, 239, 0.3); }
-    .pill-orange { background: rgba(255, 90, 54, 0.15); color: #FB923C; border: 1px solid rgba(255, 90, 54, 0.3); }
+    .pill-orange { background: rgba(255, 90, 54, 0.15); color: #FF7A59; border: 1px solid rgba(255, 90, 54, 0.3); }
     .pill-green { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
-
     .card-arrow {
-      font-size: 1.5rem;
-      color: var(--text-dim);
-      transition: transform 0.25s, color 0.25s;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: all 0.3s;
     }
     .eco-glass-card:hover .card-arrow {
-      transform: translate(4px, -4px);
-      color: #FFFFFF;
+      background: #FFFFFF;
+      color: #030408;
+      transform: rotate(45deg);
     }
     .card-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.9rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      color: #FFFFFF;
       letter-spacing: -0.5px;
-      margin-bottom: 14px;
+      color: #FFFFFF;
+      margin-bottom: 12px;
     }
     .card-body-text {
       color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.7;
-      margin-bottom: 30px;
+      font-size: 0.96rem;
+      line-height: 1.65;
     }
     .card-bottom-meta {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding-top: 20px;
-      border-top: 1px solid var(--card-border);
+      margin-top: 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       color: var(--text-dim);
     }
     .verified-tag {
       color: var(--emerald);
-      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Section 3: Visual App Experience Gallery */
+    /* Section 4: Visual App Gallery */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -529,117 +800,115 @@
     .gallery-card {
       background: var(--surface);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 20px;
+      border-radius: 28px;
+      padding: 24px;
       backdrop-filter: var(--blur);
-      transition: all 0.35s ease;
-      position: relative;
-      overflow: hidden;
+      -webkit-backdrop-filter: var(--blur);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .gallery-card:hover {
       transform: translateY(-8px);
       border-color: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     }
     .gallery-img-box {
       width: 100%;
       height: 480px;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      background: #000;
       margin-bottom: 22px;
+      background: #000000;
+      position: relative;
     }
     .gallery-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .gallery-card:hover .gallery-img-box img {
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
     .gallery-title {
       font-family: 'Outfit', sans-serif;
       font-size: 1.35rem;
       font-weight: 800;
       color: #FFFFFF;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .gallery-sub {
-      font-size: 0.88rem;
       color: var(--text-muted);
+      font-size: 0.88rem;
     }
 
-    /* Section 4: Giant Statement Footer */
+    /* Lorenzo Giant Statement Footer */
     .giant-footer-section {
+      padding: 160px 6% 60px;
+      position: relative;
+      background: linear-gradient(180deg, transparent 0%, rgba(3, 4, 8, 0.95) 100%);
       border-top: 1px solid var(--card-border);
-      padding: 120px 0 60px;
-      background: #010204;
     }
     .footer-statement-title {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(3.2rem, 8vw, 7.5rem);
+      font-size: clamp(3.2rem, 9.5vw, 9rem);
       font-weight: 900;
-      line-height: 0.95;
-      letter-spacing: -3px;
-      text-transform: uppercase;
+      line-height: 0.92;
+      letter-spacing: -3.5px;
       color: #FFFFFF;
-      margin-bottom: 50px;
+      margin-bottom: 60px;
+      text-transform: uppercase;
     }
     .footer-statement-title span {
-      background: linear-gradient(135deg, #208AEF 0%, #38BDF8 100%);
+      background: linear-gradient(135deg, #60A5FA 0%, #208AEF 50%, #FFFFFF 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 60px rgba(32, 138, 239, 0.4);
     }
-
     .contact-tiles-row {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 80px;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 90px;
     }
     .contact-slot-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 20px;
-      padding: 22px 34px;
+      background: var(--surface);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.02);
+      border-radius: 20px;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       text-decoration: none;
       color: #FFFFFF;
-      font-size: 1.2rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
       font-weight: 700;
+      backdrop-filter: var(--blur);
       transition: all 0.3s;
     }
     .contact-slot-btn:hover {
-      border-color: var(--primary);
-      background: rgba(32, 138, 239, 0.1);
-      box-shadow: 0 0 40px rgba(32, 138, 239, 0.3);
-      transform: translateY(-3px);
+      background: #FFFFFF;
+      color: #030408;
+      border-color: #FFFFFF;
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(255, 255, 255, 0.15);
     }
     .contact-slot-btn svg {
       width: 24px;
       height: 24px;
       stroke: currentColor;
     }
-
     .footer-legal-bar {
-      border-top: 1px solid var(--card-border);
-      padding-top: 36px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
       flex-wrap: wrap;
       gap: 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-dim);
     }
     .footer-legal-bar a {
       color: var(--text-muted);
@@ -650,10 +919,15 @@
       color: #FFFFFF;
     }
 
+    /* Mobile Responsive Adjustments */
     @media (max-width: 1024px) {
       .hero-stage {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         text-align: center;
+        gap: 60px;
+      }
+      .hero-content {
+        max-width: 100%;
       }
       .hero-desc {
         margin: 0 auto 36px;
@@ -661,42 +935,39 @@
       .hero-actions {
         justify-content: center;
       }
-      .hero-device-wrapper {
-        margin-top: 40px;
-      }
-      .floating-hud-widget {
-        left: 10px;
-      }
-      .ecosystem-grid, .gallery-grid {
+      .food-3d-feature {
         grid-template-columns: 1fr;
       }
-    }
-    @media (max-width: 600px) {
-      .header-nav {
+      .ecosystem-grid,
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .hud-top-left,
+      .hud-top-right,
+      .hud-left {
         display: none;
-      }
-      .hero-heading {
-        font-size: 3rem;
-        letter-spacing: -1px;
-      }
-      .contact-tiles-row {
-        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Three.js WebGL 3D Canvas -->
+  <!-- Custom Fluid Magnetic Cursor -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring">
+    <div class="cursor-label" id="cursor-label">EXPLORE</div>
+  </div>
+
+  <!-- Real WebGL 3D Canvas -->
   <canvas id="canvas3d"></canvas>
 
-  <!-- Film Noise Texture & Lighting Vignette -->
+  <!-- Film Grain Texture & Radial Vignette -->
   <div class="film-grain"></div>
   <div class="vignette"></div>
 
   <!-- Top Glass Header -->
   <header class="top-header">
-    <a href="index.html" class="brand-wrap">
+    <a href="#" class="brand-wrap">
       <img src="logo.png" alt="Happido">
       <span class="brand-title">Happido</span>
     </a>
@@ -708,6 +979,7 @@
 
     <nav class="header-nav">
       <a href="#ecosystem">Ecosystem</a>
+      <a href="#culinary">3D Discovery</a>
       <a href="#interfaces">App Screens</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="delete-account.html">Account Deletion</a>
@@ -715,22 +987,41 @@
     </nav>
   </header>
 
-  <!-- Lorenzo Lottici Style Real-time Floating HUD -->
+  <!-- Lorenzo Lottici Technical HUD Overlays -->
+  <div class="hud-top-left">
+    <div>ENGINE / <span id="hud-fps">60.0 FPS</span></div>
+    <div>RENDER / <span>PBR WEBGL 2.0</span></div>
+  </div>
+
+  <div class="hud-top-right">
+    <button class="audio-btn" id="audio-toggle">
+      <span class="audio-wave">
+        <span></span><span></span><span></span>
+      </span>
+      <span id="audio-state">SOUND: OFF</span>
+    </button>
+  </div>
+
   <div class="hud-left">
-    <div>STAGE / <span id="hud-stage">01 DISCOVERY</span></div>
-    <div>SPATIAL CAM / <span id="hud-cam">Z: 38.0</span></div>
+    <div>STAGE / <span id="hud-stage">01 KINETIC HERO</span></div>
+    <div>SPATIAL CAM / <span id="hud-cam">Z: 36.0</span></div>
+    <div>RADAR / <span>12.9716° N, 77.5946° E</span></div>
   </div>
 
-  <div class="hud-right" id="hud-pct">
-    000%
+  <div class="hud-right">
+    <svg class="progress-circle-wrap" viewBox="0 0 32 32">
+      <circle class="progress-circle-bg" cx="16" cy="16" r="14"></circle>
+      <circle class="progress-circle-bar" id="hud-circle" cx="16" cy="16" r="14"></circle>
+    </svg>
+    <span id="hud-pct">000%</span>
   </div>
 
-  <!-- Smooth Scrollable Track Container -->
+  <!-- Smooth Scrollable Content Container -->
   <div class="scroll-container">
 
     <!-- Section 1: Hero Stage -->
     <section class="hero-stage">
-      <div>
+      <div class="hero-content">
         <div class="hero-badge">
           HYPERLOCAL FOOD & LOGISTICS ENGINE
         </div>
@@ -755,14 +1046,14 @@
             <span>GET IT ON GOOGLE PLAY</span>
           </a>
 
-          <a href="#ecosystem" class="btn-explore-text">
-            Explore 3 Apps &rarr;
+          <a href="#culinary" class="btn-explore-text">
+            Explore 3D Universe &rarr;
           </a>
         </div>
       </div>
 
       <!-- Real Phone Device with Real App Onboarding -->
-      <div class="hero-device-wrapper">
+      <div class="hero-device-wrapper" id="hero-device">
         <div class="device-phone">
           <div class="device-notch"></div>
           <img src="app_slide1.png" alt="Happido App" class="device-screen-img">
@@ -776,14 +1067,64 @@
             <div class="hud-stat-label">Doorstep Drop Time</div>
           </div>
         </div>
+
+        <div class="interactive-3d-hint">
+          <span>✦</span> CLICK & DRAG 3D OBJECTS
+        </div>
       </div>
     </section>
 
-    <!-- Section 2: Architecture Tiles -->
+    <!-- Section 2: 3D Culinary & Grocery Discovery -->
+    <section class="section-view" id="culinary">
+      <div class="section-head">
+        <div>
+          <div class="sec-tag">01 / HYPERLOCAL CULINARY ARTIFACTS</div>
+          <h2 class="sec-title">Sculpted for Speed</h2>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
+          REAL-TIME 3D REACTION
+        </div>
+      </div>
+
+      <div class="food-3d-feature">
+        <div class="food-spec-box">
+          <div class="food-chip-row">
+            <span class="food-chip">✦ Artisan Kitchens</span>
+            <span class="food-chip">✦ Fresh Farm Groceries</span>
+            <span class="food-chip">✦ Heated Thermal Bags</span>
+          </div>
+
+          <h3 class="food-spec-title">Cuisine Kept at Peak Oven Temperature</h3>
+          <p class="food-spec-desc">
+            From smash burgers to steaming Italian stone-baked slices and crisp farm produce, our smart dispatch algorithm matches orders with insulated-pack riders in sub-60 milliseconds.
+          </p>
+
+          <div class="food-spec-metrics">
+            <div>
+              <div class="spec-num">99.4%</div>
+              <div class="spec-lbl">On-Time Accuracy</div>
+            </div>
+            <div>
+              <div class="spec-num">68°C</div>
+              <div class="spec-lbl">Mean Arrival Heat</div>
+            </div>
+            <div>
+              <div class="spec-num">0.8km</div>
+              <div class="spec-lbl">Average Radius</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty slot on right allows the 3D burger & pizza models to be showcased directly -->
+        <div style="min-height: 340px;"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Architecture Ecosystem Cards -->
     <section class="section-view" id="ecosystem">
       <div class="section-head">
         <div>
-          <div class="sec-tag">01 / ARCHITECTURE</div>
+          <div class="sec-tag">02 / UNIFIED ARCHITECTURE</div>
           <h2 class="sec-title">Three Native Engines</h2>
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
@@ -842,11 +1183,11 @@
       </div>
     </section>
 
-    <!-- Section 3: High-Res Interface Gallery -->
+    <!-- Section 4: High-Res Interface Gallery -->
     <section class="section-view" id="interfaces">
       <div class="section-head">
         <div>
-          <div class="sec-tag">02 / VISUAL EXPERIENCES</div>
+          <div class="sec-tag">03 / VISUAL EXPERIENCES</div>
           <h2 class="sec-title">Inside the App</h2>
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
@@ -881,7 +1222,7 @@
       </div>
     </section>
 
-    <!-- Section 4: Giant Statement Footer -->
+    <!-- Section 5: Lorenzo Giant Statement Footer -->
     <footer class="giant-footer-section">
       <h2 class="footer-statement-title">
         LET'S MAKE IT<br>
@@ -913,13 +1254,97 @@
 
   </div>
 
-  <!-- Advanced Three.js + GSAP Scroll Engine Choreography -->
+  <!-- Master 3D WebGL Engine & Lorenzo Motion Script -->
   <script>
-    // 1. Lenis Smooth Scrolling
+    // -------------------------------------------------------------
+    // 1. Fluid Custom Magnetic Cursor
+    // -------------------------------------------------------------
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    const label = document.getElementById('cursor-label');
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+    });
+
+    // Hover interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, .eco-glass-card, .gallery-card, .btn-google-play, .contact-slot-btn');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        document.body.classList.add('cursor-hover');
+      });
+      el.addEventListener('mouseleave', () => {
+        document.body.classList.remove('cursor-hover');
+      });
+    });
+
+    // -------------------------------------------------------------
+    // 2. Web Audio Synthesizer (Zero External Audio Files Needed)
+    // -------------------------------------------------------------
+    let audioCtx = null;
+    let soundEnabled = false;
+    const audioBtn = document.getElementById('audio-toggle');
+    const audioState = document.getElementById('audio-state');
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSynthTone(freq = 440, type = 'sine', duration = 0.25, gainLevel = 0.08) {
+      if (!soundEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(gainLevel, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (err) {}
+    }
+
+    audioBtn.addEventListener('click', () => {
+      initAudio();
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        audioBtn.classList.add('audio-active');
+        audioState.innerText = 'SOUND: ON';
+        playSynthTone(587.33, 'triangle', 0.4, 0.12); // D5 chime
+        setTimeout(() => playSynthTone(880, 'sine', 0.5, 0.08), 120); // A5 chime
+      } else {
+        audioBtn.classList.remove('audio-active');
+        audioState.innerText = 'SOUND: OFF';
+      }
+    });
+
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        playSynthTone(1200, 'sine', 0.08, 0.03); // Subtle tick
+      });
+    });
+
+    // -------------------------------------------------------------
+    // 3. Lenis Smooth Scrolling Engine
+    // -------------------------------------------------------------
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true
+      smoothWheel: true,
+      smoothTouch: false
     });
 
     function raf(time) {
@@ -928,97 +1353,465 @@
     }
     requestAnimationFrame(raf);
 
-    // 2. Three.js Scene Setup
+    // -------------------------------------------------------------
+    // 4. Three.js Photorealistic 3D Universe Setup
+    // -------------------------------------------------------------
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 38);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 36);
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.35;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // 3. 3D Master Group: Vibrant Glowing Polyhedral Geometry
+    // Cinematic Colored Lighting (GruboGrubo + Lorenzo Look)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0x60a5fa, 3.8);
+    keyLight.position.set(25, 30, 25);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0xff5a36, 2.8);
+    rimLight.position.set(-25, -20, -10);
+    scene.add(rimLight);
+
+    const topGlow = new THREE.PointLight(0x208aef, 4, 80);
+    topGlow.position.set(0, 15, 15);
+    scene.add(topGlow);
+
+    const goldAccent = new THREE.PointLight(0xf59e0b, 3, 60);
+    goldAccent.position.set(-15, 5, 10);
+    scene.add(goldAccent);
+
+    // Master 3D Group
     const group3D = new THREE.Group();
     scene.add(group3D);
 
-    // Outer Torus Knot
-    const geoTorus = new THREE.TorusKnotGeometry(12, 3.2, 160, 24);
-    const matTorus = new THREE.MeshBasicMaterial({
-      color: 0x208AEF,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.25
-    });
-    const meshTorus = new THREE.Mesh(geoTorus, matTorus);
-    group3D.add(meshTorus);
+    // -------------------------------------------------------------
+    // 5. Stylized Procedural 3D Culinary & Delivery Models
+    // -------------------------------------------------------------
 
-    // Glowing Core
-    const geoCore = new THREE.IcosahedronGeometry(6.5, 2);
-    const matCore = new THREE.MeshBasicMaterial({
-      color: 0xFF5A36,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35
+    // A. HERO HAPPIDO SMART DELIVERY POD (Centerpiece)
+    const podGroup = new THREE.Group();
+    
+    // Pod Main Body: Chamfered Rounded Cube Look
+    const podGeo = new THREE.BoxGeometry(6.5, 6.5, 6.5, 6, 6, 6);
+    const podMat = new THREE.MeshPhysicalMaterial({
+      color: 0x0c1324,
+      metalness: 0.85,
+      roughness: 0.18,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.1,
+      reflectivity: 0.95
     });
-    const meshCore = new THREE.Mesh(geoCore, matCore);
-    group3D.add(meshCore);
+    const podMesh = new THREE.Mesh(podGeo, podMat);
+    podGroup.add(podMesh);
 
-    // Dynamic Orbit Rings
-    const ringGeo = new THREE.RingGeometry(18, 18.2, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x38BDF8,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.3
+    // Pod Glowing Brand Plates (Front & Back)
+    const plateGeo = new THREE.BoxGeometry(5.2, 5.2, 0.2);
+    const plateMat = new THREE.MeshStandardMaterial({
+      color: 0x1d4ed8,
+      emissive: 0x208aef,
+      emissiveIntensity: 0.6,
+      roughness: 0.2,
+      metalness: 0.5
     });
-    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-    ringMesh.rotation.x = Math.PI / 3;
-    group3D.add(ringMesh);
+    const frontPlate = new THREE.Mesh(plateGeo, plateMat);
+    frontPlate.position.z = 3.3;
+    podGroup.add(frontPlate);
 
-    // 1500 Glowing Spatial Particles
-    const pCount = 1500;
+    const backPlate = frontPlate.clone();
+    backPlate.position.z = -3.3;
+    podGroup.add(backPlate);
+
+    // Magnetic Levitation Rings around the Pod
+    const levRingGeo1 = new THREE.TorusGeometry(6.2, 0.2, 24, 80);
+    const levRingMat1 = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.8,
+      metalness: 0.9,
+      roughness: 0.1
+    });
+    const levRing1 = new THREE.Mesh(levRingGeo1, levRingMat1);
+    levRing1.rotation.x = Math.PI / 2.2;
+    podGroup.add(levRing1);
+
+    const levRingGeo2 = new THREE.TorusGeometry(7.6, 0.15, 24, 80);
+    const levRingMat2 = new THREE.MeshStandardMaterial({
+      color: 0xff5a36,
+      emissive: 0xe11d48,
+      emissiveIntensity: 0.6,
+      metalness: 0.8,
+      roughness: 0.2
+    });
+    const levRing2 = new THREE.Mesh(levRingGeo2, levRingMat2);
+    levRing2.rotation.y = Math.PI / 2.6;
+    podGroup.add(levRing2);
+
+    group3D.add(podGroup);
+
+    // B. PROCEDURAL 3D GOURMET BURGER (GruboGrubo Style)
+    function createGourmetBurger() {
+      const burger = new THREE.Group();
+
+      // Top Bun (Squashed Sphere)
+      const topBunGeo = new THREE.SphereGeometry(2.2, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
+      const bunMat = new THREE.MeshStandardMaterial({
+        color: 0xc87d32,
+        roughness: 0.35,
+        metalness: 0.05
+      });
+      const topBun = new THREE.Mesh(topBunGeo, bunMat);
+      topBun.scale.set(1, 0.65, 1);
+      topBun.position.y = 0.9;
+      burger.add(topBun);
+
+      // Sesame Seeds on Top Bun
+      const seedGeo = new THREE.SphereGeometry(0.06, 8, 8);
+      const seedMat = new THREE.MeshStandardMaterial({ color: 0xfff2d6, roughness: 0.2 });
+      for (let s = 0; s < 24; s++) {
+        const seed = new THREE.Mesh(seedGeo, seedMat);
+        const phi = Math.random() * Math.PI * 0.35;
+        const theta = Math.random() * Math.PI * 2;
+        seed.position.set(
+          Math.sin(phi) * Math.cos(theta) * 2.1,
+          Math.cos(phi) * 1.35 + 0.9,
+          Math.sin(phi) * Math.sin(theta) * 2.1
+        );
+        burger.add(seed);
+      }
+
+      // Wavy Green Lettuce
+      const lettuceGeo = new THREE.TorusGeometry(1.9, 0.25, 16, 32);
+      const lettuceMat = new THREE.MeshStandardMaterial({
+        color: 0x48bb78,
+        roughness: 0.6,
+        metalness: 0.1
+      });
+      const lettuce = new THREE.Mesh(lettuceGeo, lettuceMat);
+      lettuce.rotation.x = Math.PI / 2;
+      lettuce.position.y = 0.55;
+      burger.add(lettuce);
+
+      // Melted Cheddar Cheese Slab
+      const cheeseGeo = new THREE.BoxGeometry(3.2, 0.15, 3.2);
+      const cheeseMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffb703,
+        emissive: 0xd97706,
+        emissiveIntensity: 0.2,
+        roughness: 0.25,
+        metalness: 0.1
+      });
+      const cheese = new THREE.Mesh(cheeseGeo, cheeseMat);
+      cheese.rotation.y = Math.PI / 6;
+      cheese.position.y = 0.25;
+      burger.add(cheese);
+
+      // Grilled Meat Patty
+      const pattyGeo = new THREE.CylinderGeometry(2.0, 2.0, 0.6, 32);
+      const pattyMat = new THREE.MeshStandardMaterial({
+        color: 0x4a2810,
+        roughness: 0.8,
+        metalness: 0.15
+      });
+      const patty = new THREE.Mesh(pattyGeo, pattyMat);
+      patty.position.y = -0.15;
+      burger.add(patty);
+
+      // Bottom Bun
+      const botBunGeo = new THREE.CylinderGeometry(2.0, 1.8, 0.65, 32);
+      const botBun = new THREE.Mesh(botBunGeo, bunMat);
+      botBun.position.y = -0.7;
+      burger.add(botBun);
+
+      burger.scale.set(0.9, 0.9, 0.9);
+      return burger;
+    }
+    const burgerMesh = createGourmetBurger();
+    burgerMesh.position.set(-14, 6, 8);
+    group3D.add(burgerMesh);
+
+    // C. PROCEDURAL 3D PIZZA SLICE
+    function createPizzaSlice() {
+      const pizza = new THREE.Group();
+
+      // Wedge Base
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.lineTo(2.2, 4.2);
+      shape.lineTo(-2.2, 4.2);
+      shape.closePath();
+
+      const extrudeSettings = { depth: 0.35, bevelEnabled: true, bevelSegments: 3, bevelSize: 0.08, bevelThickness: 0.08 };
+      const sliceGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+      const cheeseMat = new THREE.MeshStandardMaterial({
+        color: 0xf6ad55,
+        roughness: 0.4,
+        metalness: 0.1
+      });
+      const sliceMesh = new THREE.Mesh(sliceGeo, cheeseMat);
+      sliceMesh.rotation.x = Math.PI / 2;
+      pizza.add(sliceMesh);
+
+      // Crust Rim (Curved Tube)
+      const crustGeo = new THREE.CylinderGeometry(0.35, 0.35, 4.5, 16);
+      const crustMat = new THREE.MeshStandardMaterial({ color: 0xb7791f, roughness: 0.6 });
+      const crust = new THREE.Mesh(crustGeo, crustMat);
+      crust.rotation.z = Math.PI / 2;
+      crust.position.set(0, 0.2, -4.2);
+      pizza.add(crust);
+
+      // Pepperoni Slices
+      const pepGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.08, 16);
+      const pepMat = new THREE.MeshStandardMaterial({ color: 0x9b2c2c, roughness: 0.3, metalness: 0.2 });
+      const p1 = new THREE.Mesh(pepGeo, pepMat); p1.position.set(0, 0.4, -2.2); pizza.add(p1);
+      const p2 = new THREE.Mesh(pepGeo, pepMat); p2.position.set(0.8, 0.4, -3.2); pizza.add(p2);
+      const p3 = new THREE.Mesh(pepGeo, pepMat); p3.position.set(-0.8, 0.4, -3.2); pizza.add(p3);
+
+      pizza.scale.set(0.85, 0.85, 0.85);
+      return pizza;
+    }
+    const pizzaMesh = createPizzaSlice();
+    pizzaMesh.position.set(15, -6, 6);
+    pizzaMesh.rotation.set(0.6, -0.8, 0.4);
+    group3D.add(pizzaMesh);
+
+    // D. PROCEDURAL 3D ICED BOBA / COFFEE CUP
+    function createDrinkCup() {
+      const drink = new THREE.Group();
+
+      // Translucent Cup Body
+      const cupGeo = new THREE.CylinderGeometry(1.4, 1.0, 3.4, 32);
+      const cupMat = new THREE.MeshPhysicalMaterial({
+        color: 0x93c5fd,
+        transmission: 0.85,
+        opacity: 0.9,
+        transparent: true,
+        roughness: 0.1,
+        ior: 1.45
+      });
+      const cup = new THREE.Mesh(cupGeo, cupMat);
+      drink.add(cup);
+
+      // Liquid Core (Iced Coffee / Matcha)
+      const liquidGeo = new THREE.CylinderGeometry(1.3, 0.95, 2.8, 32);
+      const liquidMat = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, roughness: 0.2 });
+      const liquid = new THREE.Mesh(liquidGeo, liquidMat);
+      liquid.position.y = -0.2;
+      drink.add(liquid);
+
+      // Cup Lid
+      const lidGeo = new THREE.CylinderGeometry(1.5, 1.5, 0.3, 32);
+      const lidMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+      const lid = new THREE.Mesh(lidGeo, lidMat);
+      lid.position.y = 1.8;
+      drink.add(lid);
+
+      // Slanted Orange Straw
+      const strawGeo = new THREE.CylinderGeometry(0.12, 0.12, 4.2, 16);
+      const strawMat = new THREE.MeshStandardMaterial({ color: 0xff5a36, roughness: 0.3 });
+      const straw = new THREE.Mesh(strawGeo, strawMat);
+      straw.position.set(0.3, 1.4, 0);
+      straw.rotation.z = -0.3;
+      drink.add(straw);
+
+      drink.scale.set(0.85, 0.85, 0.85);
+      return drink;
+    }
+    const drinkMesh = createDrinkCup();
+    drinkMesh.position.set(-16, -8, 10);
+    drinkMesh.rotation.set(0.3, 0.5, -0.2);
+    group3D.add(drinkMesh);
+
+    // E. 3D FRESH AVOCADO (GROCERY ENGINE)
+    function createAvocado() {
+      const avo = new THREE.Group();
+      
+      const skinGeo = new THREE.SphereGeometry(1.6, 32, 16);
+      const skinMat = new THREE.MeshStandardMaterial({ color: 0x1c4522, roughness: 0.7 });
+      const skin = new THREE.Mesh(skinGeo, skinMat);
+      skin.scale.set(1, 1.4, 0.8);
+      avo.add(skin);
+
+      // Flesh
+      const fleshGeo = new THREE.SphereGeometry(1.55, 32, 16, 0, Math.PI);
+      const fleshMat = new THREE.MeshStandardMaterial({ color: 0x86efac, roughness: 0.4 });
+      const flesh = new THREE.Mesh(fleshGeo, fleshMat);
+      flesh.scale.set(0.96, 1.36, 0.76);
+      flesh.position.z = 0.05;
+      avo.add(flesh);
+
+      // Brown Seed Pit
+      const seedGeo = new THREE.SphereGeometry(0.7, 24, 24);
+      const seedMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.3, metalness: 0.1 });
+      const seed = new THREE.Mesh(seedGeo, seedMat);
+      seed.position.set(0, -0.2, 0.4);
+      avo.add(seed);
+
+      avo.scale.set(0.85, 0.85, 0.85);
+      return avo;
+    }
+    const avocadoMesh = createAvocado();
+    avocadoMesh.position.set(16, 9, 7);
+    avocadoMesh.rotation.set(-0.4, -0.6, 0.3);
+    group3D.add(avocadoMesh);
+
+    // F. 3D GLOWING GPS RADAR BEACON
+    function createRadarPin() {
+      const pin = new THREE.Group();
+
+      const sphereGeo = new THREE.SphereGeometry(1.2, 24, 24);
+      const pinMat = new THREE.MeshPhysicalMaterial({
+        color: 0x208aef,
+        emissive: 0x1d4ed8,
+        emissiveIntensity: 0.5,
+        metalness: 0.8,
+        roughness: 0.2
+      });
+      const pinHead = new THREE.Mesh(sphereGeo, pinMat);
+      pinHead.position.y = 1.4;
+      pin.add(pinHead);
+
+      const coneGeo = new THREE.ConeGeometry(1.15, 2.2, 24);
+      const pinTip = new THREE.Mesh(coneGeo, pinMat);
+      pinTip.rotation.x = Math.PI;
+      pinTip.position.y = 0.2;
+      pin.add(pinTip);
+
+      // Radar Sonar Rings
+      const ringGeo = new THREE.TorusGeometry(2.4, 0.08, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.6 });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = -1;
+      pin.add(ring);
+
+      pin.scale.set(0.8, 0.8, 0.8);
+      return pin;
+    }
+    const radarPin = createRadarPin();
+    radarPin.position.set(0, -12, 12);
+    group3D.add(radarPin);
+
+    // -------------------------------------------------------------
+    // 6. Hyper-Speed Light Trails (Warp Sensation on Scroll)
+    // -------------------------------------------------------------
+    const lineCount = 120;
+    const lineGeo = new THREE.BufferGeometry();
+    const linePos = [];
+
+    for (let i = 0; i < lineCount; i++) {
+      const x = (Math.random() - 0.5) * 60;
+      const y = (Math.random() - 0.5) * 60;
+      const z = (Math.random() - 0.5) * 80;
+      linePos.push(x, y, z);
+      linePos.push(x, y, z - Math.random() * 8 - 4);
+    }
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0x60a5fa,
+      transparent: true,
+      opacity: 0.35,
+      blending: THREE.AdditiveBlending
+    });
+    const warpLines = new THREE.LineSegments(lineGeo, lineMat);
+    scene.add(warpLines);
+
+    // 2,000 Cosmic Dust Particles
+    const pCount = 2000;
     const pGeo = new THREE.BufferGeometry();
     const pCoords = new Float32Array(pCount * 3);
-
     for (let i = 0; i < pCount * 3; i++) {
-      pCoords[i] = (Math.random() - 0.5) * 140;
+      pCoords[i] = (Math.random() - 0.5) * 160;
     }
     pGeo.setAttribute('position', new THREE.BufferAttribute(pCoords, 3));
-
     const pMat = new THREE.PointsMaterial({
-      size: 0.4,
-      color: 0x60A5FA,
+      size: 0.45,
+      color: 0x93c5fd,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.6,
       blending: THREE.AdditiveBlending
     });
     const pSystem = new THREE.Points(pGeo, pMat);
     scene.add(pSystem);
 
-    // Mouse Parallax Trackers
-    let mouseX = 0, mouseY = 0;
-    let targetX = 0, targetY = 0;
+    // -------------------------------------------------------------
+    // 7. Interactive Click & Drag Physics for 3D Universe
+    // -------------------------------------------------------------
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let dragVelocityX = 0;
+    let dragVelocityY = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      // Don't drag if clicking buttons or links
+      if (e.target.closest('a, button, input')) return;
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+      document.body.classList.add('cursor-active');
+      label.innerText = 'ROTATE';
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      document.body.classList.remove('cursor-active');
+    });
 
     window.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (isDragging) {
+        const deltaX = e.clientX - prevMouseX;
+        const deltaY = e.clientY - prevMouseY;
+        dragVelocityX = deltaX * 0.005;
+        dragVelocityY = deltaY * 0.005;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
     });
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+    // -------------------------------------------------------------
+    // 8. 3D Phone Perspective Parallax Follower
+    // -------------------------------------------------------------
+    const heroDevice = document.getElementById('hero-device');
+    window.addEventListener('mousemove', (e) => {
+      if (!heroDevice) return;
+      const rect = heroDevice.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const tiltX = (e.clientY - centerY) * -0.025;
+      const tiltY = (e.clientX - centerX) * 0.025;
+      heroDevice.querySelector('.device-phone').style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
     });
 
-    // 4. GSAP ScrollTrigger 3D Camera Scrubbing
+    // -------------------------------------------------------------
+    // 9. GSAP ScrollTrigger Spatial Choreography (Lorenzo Magic)
+    // -------------------------------------------------------------
     gsap.registerPlugin(ScrollTrigger);
-
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
+
+    const hudCircle = document.getElementById('hud-circle');
+    const hudPct = document.getElementById('hud-pct');
+    const hudStage = document.getElementById('hud-stage');
+    const hudCam = document.getElementById('hud-cam');
+
+    let lastStage = '';
 
     const tl3d = gsap.timeline({
       scrollTrigger: {
@@ -1028,58 +1821,143 @@
         scrub: 1.5,
         onUpdate: (self) => {
           const pct = Math.round(self.progress * 100);
-          document.getElementById('hud-pct').innerText = String(pct).padStart(3, '0') + '%';
-          
-          if (self.progress < 0.33) {
-            document.getElementById('hud-stage').innerText = '01 HERO DISCOVERY';
-          } else if (self.progress < 0.66) {
-            document.getElementById('hud-stage').innerText = '02 ARCHITECTURE';
-          } else {
-            document.getElementById('hud-stage').innerText = '03 APP SCREENS';
+          hudPct.innerText = String(pct).padStart(3, '0') + '%';
+
+          // Circle SVG stroke animation (circumference = 88)
+          const offset = 88 - (self.progress * 88);
+          hudCircle.style.strokeDashoffset = offset;
+
+          let currentStage = '01 KINETIC HERO';
+          if (self.progress > 0.75) {
+            currentStage = '04 GRAND FINALE';
+          } else if (self.progress > 0.50) {
+            currentStage = '03 APP SCREENS';
+          } else if (self.progress > 0.25) {
+            currentStage = '02 CULINARY ARTIFACTS';
           }
-          
-          document.getElementById('hud-cam').innerText = 'Z: ' + camera.position.z.toFixed(1);
+
+          if (currentStage !== lastStage) {
+            hudStage.innerText = currentStage;
+            if (lastStage !== '') {
+              playSynthTone(520, 'triangle', 0.2, 0.05); // Spatial stage chime
+            }
+            lastStage = currentStage;
+          }
+
+          hudCam.innerText = 'Z: ' + camera.position.z.toFixed(1);
         }
       }
     });
 
-    // 3D Motion Choreography
+    // 3D Camera & Master Group Motion Rail
     tl3d
-      .to(group3D.position, { x: 12, y: -2, z: 6, ease: "none" }, 0)
-      .to(group3D.rotation, { x: 2.2, y: 3.0, z: 1.0, ease: "none" }, 0)
-      .to(camera.position, { z: 30, ease: "none" }, 0)
-      
-      .to(group3D.position, { x: -14, y: 3, z: 12, ease: "none" }, 0.5)
-      .to(group3D.rotation, { x: 5.2, y: 6.5, z: 2.4, ease: "none" }, 0.5)
-      .to(camera.position, { z: 24, ease: "none" }, 0.5)
-      
-      .to(group3D.position, { x: 0, y: -8, z: -20, ease: "none" }, 1)
-      .to(group3D.rotation, { x: 8.0, y: 10.5, z: 4.0, ease: "none" }, 1)
-      .to(camera.position, { z: 42, ease: "none" }, 1);
+      // Stage 1 -> 2: Orbit toward Culinary Artifacts (Burger, Pizza, Avocado come to forefront)
+      .to(group3D.position, { x: 10, y: -2, z: 6, ease: "none" }, 0.25)
+      .to(group3D.rotation, { x: 0.8, y: 1.8, z: 0.2, ease: "none" }, 0.25)
+      .to(camera.position, { z: 30, ease: "none" }, 0.25)
+      .to(burgerMesh.position, { x: -6, y: 0, z: 14, ease: "none" }, 0.25)
+      .to(pizzaMesh.position, { x: 8, y: -2, z: 12, ease: "none" }, 0.25)
 
-    // 5. Render Loop with Smooth Inertia
+      // Stage 2 -> 3: Swoop to Architecture Ecosystem (Pod Centers with Rings Glowing)
+      .to(group3D.position, { x: -12, y: 3, z: 10, ease: "none" }, 0.55)
+      .to(group3D.rotation, { x: 2.2, y: 4.2, z: 1.0, ease: "none" }, 0.55)
+      .to(camera.position, { z: 24, ease: "none" }, 0.55)
+      .to(podGroup.scale, { x: 1.3, y: 1.3, z: 1.3, ease: "none" }, 0.55)
+
+      // Stage 3 -> 4: Grand Pullback for Deep Space Giant Footer
+      .to(group3D.position, { x: 0, y: -14, z: -18, ease: "none" }, 1.0)
+      .to(group3D.rotation, { x: 5.4, y: 8.5, z: 2.8, ease: "none" }, 1.0)
+      .to(camera.position, { z: 44, ease: "none" }, 1.0)
+      .to(podGroup.scale, { x: 0.9, y: 0.9, z: 0.9, ease: "none" }, 1.0);
+
+    // -------------------------------------------------------------
+    // 10. High-Performance 60 FPS Render Loop
+    // -------------------------------------------------------------
     const clock = new THREE.Clock();
+    let frameCount = 0;
+    let lastFpsTime = performance.now();
+    const fpsMeter = document.getElementById('hud-fps');
 
     function renderLoop() {
       requestAnimationFrame(renderLoop);
 
       const delta = clock.getElapsedTime();
+      frameCount++;
 
-      targetX += (mouseX - targetX) * 0.04;
-      targetY += (mouseY - targetY) * 0.04;
+      // Real FPS Counter
+      const now = performance.now();
+      if (now - lastFpsTime >= 1000) {
+        const currentFps = (frameCount * 1000 / (now - lastFpsTime)).toFixed(1);
+        fpsMeter.innerText = currentFps + ' FPS';
+        frameCount = 0;
+        lastFpsTime = now;
+      }
 
-      meshTorus.rotation.y += 0.003;
-      meshCore.rotation.x += 0.005;
-      ringMesh.rotation.z += 0.002;
+      // Smooth Magnetic Cursor Lerp
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
 
-      group3D.rotation.x += targetY * 0.008;
-      group3D.rotation.y += targetX * 0.008;
+      // Apply Drag Momentum with Damping
+      group3D.rotation.y += dragVelocityX;
+      group3D.rotation.x += dragVelocityY;
+      dragVelocityX *= 0.92;
+      dragVelocityY *= 0.92;
 
-      pSystem.rotation.y = delta * 0.015;
+      // Mouse Parallax Lerp
+      const normMouseX = (mouseX / window.innerWidth - 0.5) * 2;
+      const normMouseY = (mouseY / window.innerHeight - 0.5) * 2;
+      group3D.rotation.y += normMouseX * 0.002;
+      group3D.rotation.x += normMouseY * 0.002;
+
+      // Harmonic Hover Physics for Individual 3D Food & Pod Objects
+      podGroup.rotation.y += 0.006;
+      levRing1.rotation.z += 0.012;
+      levRing2.rotation.x += 0.008;
+
+      burgerMesh.rotation.y += 0.01;
+      burgerMesh.rotation.x = Math.sin(delta * 1.5) * 0.15;
+      burgerMesh.position.y += Math.sin(delta * 2.0) * 0.015;
+
+      pizzaMesh.rotation.z += 0.008;
+      pizzaMesh.rotation.y = Math.cos(delta * 1.2) * 0.2;
+      pizzaMesh.position.y += Math.cos(delta * 1.8) * 0.02;
+
+      drinkMesh.rotation.y += 0.012;
+      drinkMesh.position.y += Math.sin(delta * 1.6 + 1.0) * 0.018;
+
+      avocadoMesh.rotation.x += 0.008;
+      avocadoMesh.rotation.y += 0.01;
+      avocadoMesh.position.y += Math.cos(delta * 2.2) * 0.015;
+
+      radarPin.rotation.y += 0.015;
+      radarPin.position.y += Math.sin(delta * 2.5) * 0.02;
+
+      // Warp Lines Stream
+      const positions = warpLines.geometry.attributes.position.array;
+      for (let i = 2; i < positions.length; i += 6) {
+        positions[i] += 0.45;
+        positions[i + 3] += 0.45;
+        if (positions[i] > 40) {
+          positions[i] -= 80;
+          positions[i + 3] -= 80;
+        }
+      }
+      warpLines.geometry.attributes.position.needsUpdate = true;
+
+      // Cosmic Particle Drift
+      pSystem.rotation.y = delta * 0.02;
 
       renderer.render(scene, camera);
     }
     renderLoop();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 
 </body>
