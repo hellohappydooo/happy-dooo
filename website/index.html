@@ -3,36 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happido — Hyperlocal Food & Instant Delivery</title>
-  <meta name="description" content="Happido brings the finest culinary destinations, fresh produce, and daily essentials straight to your doorstep in minutes. Experience the next generation of hyperlocal delivery.">
+  <title>Happido — Taste the City in Minutes</title>
+  <meta name="description" content="Order handpicked cuisine from celebrated local restaurants and fresh daily essentials with hyper-accurate live tracking and rapid delivery.">
   <link rel="icon" type="image/png" href="favicon.png">
   
-  <!-- Premium Modern Typography (Plus Jakarta Sans + Outfit) -->
+  <!-- Premium Fonts: Plus Jakarta Sans & Syne Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Lottie Player for high-end vector motion -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #090D16;
-      --bg-surface: rgba(18, 25, 41, 0.7);
-      --bg-card: rgba(22, 31, 52, 0.55);
-      --bg-card-hover: rgba(30, 43, 72, 0.75);
-      --primary: #258DF6;
-      --primary-glow: rgba(37, 141, 246, 0.4);
+      --primary: #1A73E8;
+      --primary-gradient: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
       --accent: #FF5A36;
-      --accent-glow: rgba(255, 90, 54, 0.35);
-      --emerald: #10B981;
-      --emerald-glow: rgba(16, 185, 129, 0.3);
-      --text: #F8FAFC;
-      --text-muted: #94A3B8;
-      --text-dim: #64748B;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(37, 141, 246, 0.5);
-      --blur: blur(20px);
+      --dark: #0B0F19;
+      --dark-card: #111827;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --bg-light: #F8FAFC;
+      --bg-subtle: #F1F5F9;
+      --border: #E2E8F0;
+      --radius-xl: 32px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 25px 60px -15px rgba(26, 115, 232, 0.16);
     }
 
     * {
@@ -44,557 +40,558 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: #FFFFFF;
+      color: var(--text-main);
       overflow-x: hidden;
-      position: relative;
       line-height: 1.6;
     }
 
-    /* Ambient Dynamic Mesh Background */
-    .ambient-glow {
-      position: fixed;
-      width: 700px;
-      height: 700px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-      filter: blur(140px);
-      opacity: 0.35;
-      animation: floatAura 20s infinite alternate ease-in-out;
-    }
-    .glow-1 {
-      top: -150px;
-      right: -100px;
-      background: radial-gradient(circle, #258DF6, transparent 70%);
-    }
-    .glow-2 {
-      top: 40%;
-      left: -200px;
-      background: radial-gradient(circle, #FF5A36, transparent 70%);
-      animation-delay: -7s;
-    }
-    .glow-3 {
-      bottom: -150px;
-      right: 20%;
-      background: radial-gradient(circle, #10B981, transparent 70%);
-      animation-delay: -14s;
-    }
-
-    @keyframes floatAura {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(60px, 80px) scale(1.1); }
-      100% { transform: translate(-40px, -60px) scale(0.95); }
-    }
-
-    /* Top Glass Navbar */
-    .nav-wrap {
+    /* Modern Floating Glass Header */
+    .header-wrapper {
       position: sticky;
       top: 0;
-      z-index: 100;
-      padding: 20px 8%;
-      background: rgba(9, 13, 22, 0.7);
-      backdrop-filter: var(--blur);
-      border-bottom: 1px solid var(--border);
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 16px 8%;
     }
-    .navbar {
-      max-width: 1300px;
+    .header-container {
+      max-width: 1280px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .brand {
+    .brand-link {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       text-decoration: none;
-      color: var(--text);
+      color: var(--dark);
     }
-    .brand-logo-wrap {
-      width: 44px;
-      height: 44px;
-      position: relative;
-    }
-    .brand-logo-wrap img {
-      width: 100%;
-      height: 100%;
+    .brand-link img {
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
-      box-shadow: 0 0 24px var(--primary-glow);
+      box-shadow: 0 4px 14px rgba(26, 115, 232, 0.2);
     }
-    .brand-name {
-      font-family: 'Outfit', sans-serif;
+    .brand-title {
+      font-family: 'Syne', sans-serif;
       font-size: 1.55rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--dark);
     }
-    .nav-links {
+    .nav-menu {
       display: flex;
       align-items: center;
-      gap: 36px;
+      gap: 32px;
     }
-    .nav-links a {
-      color: var(--text-muted);
+    .nav-menu a {
       text-decoration: none;
-      font-weight: 500;
-      font-size: 0.94rem;
-      transition: all 0.25s ease;
-      letter-spacing: 0.2px;
-    }
-    .nav-links a:hover {
-      color: var(--text);
-      text-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-    }
-    .btn-contact {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      padding: 10px 22px;
-      border-radius: 99px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
       font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: color 0.2s;
     }
-    .btn-contact:hover {
+    .nav-menu a:hover {
+      color: var(--primary);
+    }
+    .btn-header-cta {
+      background: var(--dark);
+      color: #FFFFFF !important;
+      padding: 10px 24px;
+      border-radius: 99px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.25s ease;
+    }
+    .btn-header-cta:hover {
       background: var(--primary);
-      border-color: var(--primary);
-      box-shadow: 0 0 24px var(--primary-glow);
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
     }
 
-    /* Content Wrapper */
-    .main-wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 1300px;
+    /* Container */
+    .container {
+      max-width: 1280px;
       margin: 0 auto;
       padding: 0 8%;
     }
 
     /* Hero Section */
     .hero {
-      padding: 100px 0 80px;
+      padding: 80px 0 100px;
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
       align-items: center;
-      gap: 60px;
-      min-height: calc(88vh - 85px);
+      gap: 70px;
+      position: relative;
     }
-    .hero-pill {
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero-tag {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 18px;
+      gap: 8px;
+      padding: 6px 16px;
+      background: #EFF6FF;
+      border: 1px solid #DBEAFE;
+      color: #1D4ED8;
       border-radius: 99px;
-      background: rgba(37, 141, 246, 0.1);
-      border: 1px solid rgba(37, 141, 246, 0.25);
-      color: #93C5FD;
       font-size: 0.84rem;
-      font-weight: 600;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
+      font-weight: 700;
       margin-bottom: 24px;
-      box-shadow: 0 0 30px rgba(37, 141, 246, 0.15);
     }
-    .hero-pill-dot {
-      width: 7px;
-      height: 7px;
+    .hero-tag-pulse {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #60A5FA;
-      box-shadow: 0 0 10px #60A5FA;
-      animation: pulse 2s infinite;
+      background: #2563EB;
+      box-shadow: 0 0 10px #2563EB;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-
-    .hero-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 4.2rem;
-      font-weight: 900;
+    .hero-heading {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
       line-height: 1.08;
       letter-spacing: -1.5px;
+      color: var(--dark);
       margin-bottom: 24px;
     }
-    .gradient-text {
-      background: linear-gradient(135deg, #FFFFFF 20%, #60A5FA 70%, #38BDF8 100%);
+    .hero-heading span {
+      background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 50%, #FF5A36 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .gradient-accent {
-      background: linear-gradient(135deg, #FF6B4A 0%, #FFA07A 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero-desc {
-      font-size: 1.18rem;
+    .hero-description {
+      font-size: 1.2rem;
       color: var(--text-muted);
       line-height: 1.7;
-      max-width: 520px;
-      margin-bottom: 40px;
-      font-weight: 400;
+      max-width: 540px;
+      margin-bottom: 38px;
     }
-
-    .hero-actions {
+    .hero-cta-group {
       display: flex;
       align-items: center;
       gap: 18px;
       flex-wrap: wrap;
     }
-    .btn-playstore {
+    .btn-google-play {
       display: inline-flex;
       align-items: center;
       gap: 14px;
-      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-      color: var(--text);
+      background: var(--dark);
+      color: #FFFFFF;
       text-decoration: none;
       padding: 14px 28px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-    .btn-playstore:hover {
-      border-color: rgba(37, 141, 246, 0.6);
+    .btn-google-play:hover {
       transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(37, 141, 246, 0.25);
+      box-shadow: var(--shadow-lg);
+      background: #111827;
     }
-    .btn-playstore svg {
-      width: 28px;
-      height: 28px;
+    .btn-google-play svg {
+      width: 26px;
+      height: 26px;
     }
-    .playstore-sub {
+    .btn-google-play .label-sub {
       display: block;
       font-size: 0.68rem;
-      letter-spacing: 1px;
-      color: var(--text-dim);
       text-transform: uppercase;
-      font-weight: 700;
-    }
-    .playstore-main {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #FFFFFF;
-    }
-
-    .btn-explore {
-      padding: 16px 28px;
-      color: var(--text-muted);
-      text-decoration: none;
+      letter-spacing: 0.8px;
+      opacity: 0.75;
       font-weight: 600;
-      font-size: 0.98rem;
-      border-radius: 18px;
-      transition: all 0.25s;
     }
-    .btn-explore:hover {
-      color: var(--text);
-      transform: translateX(4px);
+    .btn-google-play .label-main {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .live-badge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
     }
 
-    /* Motion Display Showcase (Right Hero) */
-    .hero-showcase {
-      position: relative;
+    /* Hero Right: Real App Device Mockup */
+    .phone-mockup-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
-    .glass-display {
-      width: 100%;
-      background: var(--bg-card);
-      backdrop-filter: var(--blur);
-      border: 1px solid var(--border);
-      border-radius: 36px;
-      padding: 38px;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    .phone-frame {
+      width: 320px;
+      height: 640px;
+      background: #111827;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 0 35px 80px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
+      transform: rotate(-2deg);
+      transition: transform 0.4s ease;
     }
-    .glass-display::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    .phone-frame:hover {
+      transform: rotate(0deg) translateY(-8px);
     }
-    .lottie-container {
+    .phone-screen {
       width: 100%;
-      height: 280px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .showcase-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-    .stat-box {
-      text-align: center;
-    }
-    .stat-num {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: #FFFFFF;
-    }
-    .stat-label {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
-    /* Ecosystem Architecture Section */
-    .section {
-      padding: 100px 0;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background: #FFFFFF;
       position: relative;
     }
-    .section-head {
-      text-align: center;
-      max-width: 720px;
-      margin: 0 auto 60px;
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
-    .section-tag {
+    .phone-notch {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 20px;
+      background: #111827;
+      border-radius: 12px;
+      z-index: 10;
+    }
+    .floating-card-metric {
+      position: absolute;
+      bottom: 40px;
+      left: -40px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 20;
+      animation: floatWidget 4s ease-in-out infinite alternate;
+    }
+    @keyframes floatWidget {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+    .metric-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #EFF6FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .metric-value {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--dark);
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Core Metrics Banner */
+    .metrics-strip {
+      background: var(--bg-light);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 50px 0;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      text-align: center;
+    }
+    .metric-item h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+    }
+    .metric-item p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Three Apps Showcase Section */
+    .apps-section {
+      padding: 110px 0;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 70px;
+    }
+    .section-badge {
       color: var(--primary);
       font-size: 0.85rem;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       margin-bottom: 12px;
     }
     .section-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.8rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
       font-weight: 800;
       letter-spacing: -1px;
+      color: var(--dark);
       margin-bottom: 16px;
-      color: #FFFFFF;
     }
-    .section-subtitle {
-      font-size: 1.1rem;
+    .section-desc {
       color: var(--text-muted);
+      font-size: 1.15rem;
       line-height: 1.7;
     }
 
-    .ecosystem-grid {
+    .app-cards-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
+      gap: 32px;
     }
-    .eco-card {
-      background: var(--bg-card);
+    .app-feature-card {
+      background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 40px 32px;
-      backdrop-filter: var(--blur);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 38px 32px;
+      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
-    .eco-card:hover {
-      background: var(--bg-card-hover);
-      border-color: rgba(255, 255, 255, 0.2);
+    .app-feature-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--shadow-lg);
+      border-color: #BFDBFE;
     }
-    .eco-pill {
-      align-self: flex-start;
-      font-size: 0.72rem;
-      font-weight: 700;
+    .app-pill {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
       padding: 6px 14px;
       border-radius: 99px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
+      align-self: flex-start;
     }
-    .pill-customer {
-      background: rgba(37, 141, 246, 0.15);
-      color: #60A5FA;
-      border: 1px solid rgba(37, 141, 246, 0.3);
-    }
-    .pill-merchant {
-      background: rgba(255, 90, 54, 0.15);
-      color: #FB923C;
-      border: 1px solid rgba(255, 90, 54, 0.3);
-    }
-    .pill-rider {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34D399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
+    .pill-blue { background: #EFF6FF; color: #1D4ED8; }
+    .pill-orange { background: #FFF7ED; color: #C2410C; }
+    .pill-green { background: #ECFDF5; color: #047857; }
 
-    .eco-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 12px;
-      letter-spacing: -0.3px;
+    .app-feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
     }
-    .eco-desc {
+    .app-feature-card p {
       color: var(--text-muted);
-      font-size: 0.98rem;
+      font-size: 1rem;
       line-height: 1.7;
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
-    .eco-meta {
+    .app-card-footer {
       padding-top: 20px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
     }
-    .eco-pkg {
-      font-family: 'SF Mono', Menlo, monospace;
-      color: var(--text-dim);
-    }
-    .eco-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--emerald);
+    .app-code {
+      font-family: monospace;
+      color: #64748B;
       font-weight: 600;
     }
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
+    .app-live-tag {
+      color: #10B981;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    /* Core Pillars Strip */
-    .pillars-strip {
+    /* Experience Preview Carousel Section */
+    .experience-section {
+      background: var(--bg-light);
+      padding: 100px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .screenshots-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      margin: 40px 0 100px;
+      gap: 36px;
+      margin-top: 50px;
     }
-    .pillar-box {
-      background: rgba(255, 255, 255, 0.02);
+    .mockup-item {
+      text-align: center;
+    }
+    .mockup-item-img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
       border: 1px solid var(--border);
-      padding: 30px;
-      border-radius: 20px;
-      transition: all 0.3s;
+      transition: transform 0.3s;
     }
-    .pillar-box:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.15);
+    .mockup-item-img:hover {
+      transform: scale(1.02);
     }
-    .pillar-box h4 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
+    .mockup-item h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
       font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 8px;
+      margin: 18px 0 6px;
+      color: var(--dark);
     }
-    .pillar-box p {
+    .mockup-item p {
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
     }
 
     /* Footer */
     .footer {
-      border-top: 1px solid var(--border);
-      background: rgba(5, 8, 15, 0.9);
-      padding: 80px 8% 40px;
-      position: relative;
-      z-index: 10;
+      background: var(--dark);
+      color: #94A3B8;
+      padding: 90px 0 40px;
     }
-    .footer-content {
-      max-width: 1300px;
-      margin: 0 auto;
+    .footer-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 1fr;
       gap: 60px;
       margin-bottom: 60px;
     }
+    .footer-brand h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 16px;
+    }
     .footer-brand p {
-      color: var(--text-muted);
-      font-size: 0.94rem;
+      font-size: 0.95rem;
       line-height: 1.7;
-      margin-top: 16px;
       max-width: 360px;
     }
-    .footer-col h5 {
-      font-family: 'Outfit', sans-serif;
+    .footer-column h5 {
       color: #FFFFFF;
       font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 20px;
-      letter-spacing: 0.2px;
+      margin-bottom: 22px;
+      letter-spacing: 0.3px;
     }
-    .footer-col ul {
+    .footer-column ul {
       list-style: none;
     }
-    .footer-col ul li {
+    .footer-column ul li {
       margin-bottom: 12px;
     }
-    .footer-col ul li a {
-      color: var(--text-muted);
+    .footer-column ul li a {
+      color: #94A3B8;
       text-decoration: none;
       font-size: 0.92rem;
       transition: color 0.2s;
     }
-    .footer-col ul li a:hover {
-      color: var(--primary);
+    .footer-column ul li a:hover {
+      color: #FFFFFF;
     }
     .footer-bottom {
-      max-width: 1300px;
-      margin: 0 auto;
+      border-top: 1px solid #1F2937;
       padding-top: 30px;
-      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 16px;
-      color: var(--text-dim);
-      font-size: 0.86rem;
+      gap: 20px;
+      font-size: 0.88rem;
     }
 
     @media (max-width: 1024px) {
       .hero {
         grid-template-columns: 1fr;
-        padding-top: 50px;
         text-align: center;
       }
-      .hero-desc {
+      .hero-description {
         margin: 0 auto 36px;
       }
-      .hero-actions {
+      .hero-cta-group {
         justify-content: center;
       }
-      .ecosystem-grid, .pillars-strip {
+      .phone-mockup-wrapper {
+        margin-top: 40px;
+      }
+      .floating-card-metric {
+        left: 20px;
+      }
+      .app-cards-grid, .screenshots-row, .metrics-grid {
         grid-template-columns: 1fr;
       }
-      .footer-content {
+      .footer-grid {
         grid-template-columns: 1fr 1fr;
       }
     }
     @media (max-width: 640px) {
-      .hero-title {
+      .hero-heading {
         font-size: 2.8rem;
       }
-      .nav-links {
+      .nav-menu {
         display: none;
       }
-      .footer-content {
+      .footer-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -602,238 +599,232 @@
 </head>
 <body>
 
-  <!-- Ambient Glow Backgrounds -->
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
-  <div class="ambient-glow glow-3"></div>
-
-  <!-- Glass Navbar -->
-  <div class="nav-wrap">
-    <nav class="navbar">
-      <a href="index.html" class="brand">
-        <div class="brand-logo-wrap">
-          <img src="logo.png" alt="Happido">
-        </div>
-        <span class="brand-name">Happido</span>
+  <!-- Modern Floating Header -->
+  <div class="header-wrapper">
+    <div class="header-container">
+      <a href="index.html" class="brand-link">
+        <img src="logo.png" alt="Happido">
+        <span class="brand-title">Happido</span>
       </a>
 
-      <div class="nav-links">
-        <a href="#ecosystem">Ecosystem</a>
-        <a href="#pillars">Platform Pillars</a>
+      <nav class="nav-menu">
+        <a href="#apps">Ecosystem</a>
+        <a href="#preview">Experience</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="delete-account.html">Account Deletion</a>
-        <a href="contact.html" class="btn-contact">Contact & Support</a>
-      </div>
-    </nav>
+        <a href="contact.html" class="btn-header-cta">Support</a>
+      </nav>
+    </div>
   </div>
 
-  <div class="main-wrap">
-    
-    <!-- Hero Section -->
-    <header class="hero">
-      <div class="hero-left">
-        <div class="hero-pill">
-          <div class="hero-pill-dot"></div>
-          Hyperlocal On-Demand Ecosystem
+  <!-- Hero Section -->
+  <div class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <div class="hero-tag-pulse"></div>
+          Hyperlocal Delivery Reimagined
         </div>
         
-        <h1 class="hero-title">
-          Fast, Fresh & <br>
-          <span class="gradient-text">Seamless Delivery</span>
+        <h1 class="hero-heading">
+          Taste the City <br>
+          in <span>Minutes</span>
         </h1>
         
-        <p class="hero-desc">
-          Happido orchestrates restaurant culinary experiences, hyperlocal grocers, and autonomous delivery logistics into one unified, ultra-reliable platform.
+        <p class="hero-description">
+          Happido seamlessly delivers dishes from celebrated local kitchens and daily fresh essentials with sub-second live order telemetry and precision doorstep drops.
         </p>
 
-        <div class="hero-actions">
-          <a href="#ecosystem" class="btn-playstore">
-            <!-- Official Clean Google Play Vector -->
+        <div class="hero-cta-group">
+          <a href="#apps" class="btn-google-play">
             <svg viewBox="0 0 24 24">
-              <defs>
-                <linearGradient id="gp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00C9FF"/><stop offset="100%" stop-color="#92FE9D"/></linearGradient>
-              </defs>
               <path fill="#4285F4" d="M3.6 1.8L13.8 12 3.6 22.2c-.3-.3-.6-.8-.6-1.8V3.6c0-1 .3-1.5.6-1.8z"/>
               <path fill="#FBBC04" d="M17.3 8.6L13.8 12l3.5 3.4 3.9-2.2c1.1-.6 1.1-1.7 0-2.3l-3.9-2.3z"/>
               <path fill="#EA4335" d="M3.6 1.8l10.2 10.2 3.5-3.4L6.4 2.4C5.8 2 5.1 1.8 4.5 1.8c-.3 0-.6 0-.9 0z"/>
               <path fill="#34A853" d="M3.6 22.2l13.7-6.8-3.5-3.4L3.6 22.2z"/>
             </svg>
             <div>
-              <span class="playstore-sub">Available on</span>
-              <span class="playstore-main">Google Play</span>
+              <span class="label-sub">Get it on</span>
+              <span class="label-main">Google Play</span>
             </div>
           </a>
 
-          <a href="#ecosystem" class="btn-explore">
-            Explore Apps &rarr;
-          </a>
-        </div>
-      </div>
-
-      <!-- Right Column: Interactive Motion Showcase -->
-      <div class="hero-showcase">
-        <div class="glass-display">
-          <div id="hero-lottie" class="lottie-container"></div>
-          
-          <div class="showcase-stats">
-            <div class="stat-box">
-              <div class="stat-num">99.8%</div>
-              <div class="stat-label">On-Time Rate</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-num">&lt;25m</div>
-              <div class="stat-label">Average Transit</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-num">256-bit</div>
-              <div class="stat-label">Bank Security</div>
-            </div>
+          <div class="live-badge">
+            <div class="live-badge-dot"></div>
+            Internal Release Active (v1.0.0)
           </div>
         </div>
       </div>
-    </header>
 
-    <!-- Platform Pillars Strip -->
-    <div class="pillars-strip" id="pillars">
-      <div class="pillar-box">
-        <h4>Intelligent Predictive Dispatch</h4>
-        <p>Routing algorithms forecast demand in real-time, routing delivery partners along the most efficient corridors.</p>
-      </div>
-      <div class="pillar-box">
-        <h4>Sub-Second Sync Architecture</h4>
-        <p>Live websocket telemetry connects kitchen order management systems and customer tracking screens synchronously.</p>
-      </div>
-      <div class="pillar-box">
-        <h4>Tokenized Frictionless Checkout</h4>
-        <p>Zero-friction payment rails powered by PCI-DSS Level 1 compliant Stripe and Razorpay integrations.</p>
-      </div>
-    </div>
+      <!-- Real Phone Mockup with Actual App Graphics -->
+      <div class="phone-mockup-wrapper">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="app_slide1.png" alt="Happido Customer App Experience">
+          </div>
+        </div>
 
-    <!-- The Ecosystem Section -->
-    <section class="section" id="ecosystem">
-      <div class="section-head">
-        <div class="section-tag">Dedicated Application Architecture</div>
-        <h2 class="section-title">The Three Pillars of Happido</h2>
-        <p class="section-subtitle">
-          Engineered natively for low latency, buttery smooth performance, and high reliability across every touchpoint.
-        </p>
-      </div>
-
-      <div class="ecosystem-grid">
-        
-        <!-- Customer Card -->
-        <div class="eco-card">
+        <!-- Floating UI Widget -->
+        <div class="floating-card-metric">
+          <div class="metric-bubble">⚡</div>
           <div>
-            <span class="eco-pill pill-customer">Customer Experience</span>
-            <h3 class="eco-title">Happido Customer</h3>
-            <p class="eco-desc">
-              Curated dining discovery, instant hyper-grocery dispatch, dynamic live tracking maps, and direct rider communication.
-            </p>
-          </div>
-          <div class="eco-meta">
-            <span class="eco-pkg">com.mshappido.customer</span>
-            <span class="eco-status"><span class="status-dot"></span> Ready (v1.0.0)</span>
+            <div class="metric-value">22 Mins</div>
+            <div class="metric-label">Average Delivery</div>
           </div>
         </div>
-
-        <!-- Restaurant Card -->
-        <div class="eco-card">
-          <div>
-            <span class="eco-pill pill-merchant">Merchant Suite</span>
-            <h3 class="eco-title">Happido Partner</h3>
-            <p class="eco-desc">
-              Real-time kitchen display systems, instant menu & inventory toggles, surge dispatch controls, and transparent daily revenue analytics.
-            </p>
-          </div>
-          <div class="eco-meta">
-            <span class="eco-pkg">com.mshappido.restaurant</span>
-            <span class="eco-status"><span class="status-dot"></span> Ready (v1.0.0)</span>
-          </div>
-        </div>
-
-        <!-- Rider Card -->
-        <div class="eco-card">
-          <div>
-            <span class="eco-pill pill-rider">Fleet & Logistics</span>
-            <h3 class="eco-title">Happido Rider</h3>
-            <p class="eco-desc">
-              Turn-by-turn navigation overlay, intelligent route batching, transparent earnings dashboard, and instant emergency assistance.
-            </p>
-          </div>
-          <div class="eco-meta">
-            <span class="eco-pkg">com.mshappido.rider</span>
-            <span class="eco-status"><span class="status-dot"></span> Ready (v1.0.0)</span>
-          </div>
-        </div>
-
       </div>
     </section>
-
   </div>
+
+  <!-- Key Metrics Banner -->
+  <section class="metrics-strip">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <h3>99.8%</h3>
+          <p>Order Accuracy</p>
+        </div>
+        <div class="metric-item">
+          <h3>&lt; 25m</h3>
+          <p>Transit Duration</p>
+        </div>
+        <div class="metric-item">
+          <h3>3 Apps</h3>
+          <p>Unified Ecosystem</p>
+        </div>
+        <div class="metric-item">
+          <h3>100%</h3>
+          <p>Cashless & Secure</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Three Ecosystem Applications -->
+  <section class="apps-section" id="apps">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">The Architecture</div>
+        <h2 class="section-title">One Platform, Three Dedicated Experiences</h2>
+        <p class="section-desc">Custom-built applications tailored precisely for diners, restaurant partners, and delivery heroes.</p>
+      </div>
+
+      <div class="app-cards-grid">
+        <!-- Customer App -->
+        <div class="app-feature-card">
+          <div>
+            <span class="app-pill pill-blue">For Customers</span>
+            <h3>Happido Customer</h3>
+            <p>Instant menu discovery, curated gourmet picks, smart doorstep routing, real-time live map tracking, and seamless payments.</p>
+          </div>
+          <div class="app-card-footer">
+            <span class="app-code">com.mshappido.customer</span>
+            <span class="app-live-tag">● Release Ready</span>
+          </div>
+        </div>
+
+        <!-- Partner App -->
+        <div class="app-feature-card">
+          <div>
+            <span class="app-pill pill-orange">For Merchants</span>
+            <h3>Happido Partner</h3>
+            <p>Sub-second order dispatch receipts, live kitchen preparation queues, dynamic menu catalogue management, and revenue analytics.</p>
+          </div>
+          <div class="app-card-footer">
+            <span class="app-code">com.mshappido.restaurant</span>
+            <span class="app-live-tag">● Release Ready</span>
+          </div>
+        </div>
+
+        <!-- Rider App -->
+        <div class="app-feature-card">
+          <div>
+            <span class="app-pill pill-green">For Delivery Heroes</span>
+            <h3>Happido Rider</h3>
+            <p>Precision turn-by-turn navigation overlay, intelligent order batching, transparent payout logs, and safety support.</p>
+          </div>
+          <div class="app-card-footer">
+            <span class="app-code">com.mshappido.rider</span>
+            <span class="app-live-tag">● Release Ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Preview Gallery -->
+  <section class="experience-section" id="preview">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">UI/UX Preview</div>
+        <h2 class="section-title">Designed for Joy & Speed</h2>
+        <p class="section-desc">Take a look inside the customer journey, from onboarding to delivery confirmation.</p>
+      </div>
+
+      <div class="screenshots-row">
+        <div class="mockup-item">
+          <img src="app_slide1.png" alt="Onboarding" class="mockup-item-img">
+          <h4>Smart Dining Discovery</h4>
+          <p>Find meals tailored to your tastebuds effortlessly.</p>
+        </div>
+        <div class="mockup-item">
+          <img src="app_slide2.png" alt="Order Placement" class="mockup-item-img">
+          <h4>Swift Instant Checkout</h4>
+          <p>Pay with UPI, cards, or digital wallets in seconds.</p>
+        </div>
+        <div class="mockup-item">
+          <img src="app_slide3.png" alt="Live Tracking" class="mockup-item-img">
+          <h4>Live Pinpoint Tracking</h4>
+          <p>Watch your order arrive turn-by-turn in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Global Footer -->
   <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <a href="index.html" class="brand" style="margin-bottom: 12px;">
-          <div class="brand-logo-wrap" style="width: 36px; height: 36px;">
-            <img src="logo.png" alt="Happido">
-          </div>
-          <span class="brand-name" style="font-size: 1.35rem;">Happido</span>
-        </a>
-        <p>Happido Technologies Private Limited.<br>Empowering local commerce with next-generation hyperlocal fulfillment and delivery engineering.</p>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>Happido</h4>
+          <p>Happido Technologies Private Limited.<br>Empowering local restaurant ecosystems with state-of-the-art delivery infrastructure.</p>
+        </div>
+
+        <div class="footer-column">
+          <h5>Legal & Policies</h5>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="delete-account.html">Account Deletion</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h5>Ecosystem</h5>
+          <ul>
+            <li><a href="#apps">Happido Customer</a></li>
+            <li><a href="#apps">Happido Partner</a></li>
+            <li><a href="#apps">Happido Rider</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h5>Support</h5>
+          <ul>
+            <li><a href="mailto:support@happido.in">support@happido.in</a></li>
+            <li><a href="mailto:happiido@gmail.com">happiido@gmail.com</a></li>
+            <li><a href="contact.html">Developer Helpdesk</a></li>
+          </ul>
+        </div>
       </div>
 
-      <div class="footer-col">
-        <h5>Legal & Compliance</h5>
-        <ul>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="delete-account.html">Account & Data Deletion</a></li>
-          <li><a href="terms.html">Terms of Service</a></li>
-        </ul>
+      <div class="footer-bottom">
+        <div>&copy; 2026 Happido Technologies. All rights reserved.</div>
+        <div>Verified for Google Play Store Developer Guidelines</div>
       </div>
-
-      <div class="footer-col">
-        <h5>Applications</h5>
-        <ul>
-          <li><a href="#ecosystem">Happido Customer</a></li>
-          <li><a href="#ecosystem">Happido Partner</a></li>
-          <li><a href="#ecosystem">Happido Rider</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h5>Support & Operations</h5>
-        <ul>
-          <li><a href="mailto:support@happido.in">support@happido.in</a></li>
-          <li><a href="mailto:happiido@gmail.com">happiido@gmail.com</a></li>
-          <li><a href="contact.html">Developer Helpdesk</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <div>&copy; 2026 Happido Technologies. All rights reserved.</div>
-      <div>Compliant with Google Play Developer Policies & Indian IT Acts</div>
     </div>
   </footer>
-
-  <!-- Lottie Initialization -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      try {
-        lottie.loadAnimation({
-          container: document.getElementById('hero-lottie'),
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          path: 'delivery_anim.json'
-        });
-      } catch (e) {
-        console.warn("Lottie loading error:", e);
-      }
-    });
-  </script>
 
 </body>
 </html>
