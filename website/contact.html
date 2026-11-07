@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Support - Happido</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #208AEF;
+      --dark: #0F172A;
+      --gray: #475569;
+      --light-gray: #F8FAFC;
+      --border: #E2E8F0;
+      --white: #FFFFFF;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    body {
+      background: var(--light-gray);
+      color: var(--dark);
+      line-height: 1.7;
+    }
+    .header {
+      background: var(--white);
+      padding: 20px 8%;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: var(--white);
+      padding: 48px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    p {
+      color: var(--gray);
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    .contact-card {
+      background: var(--light-gray);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .contact-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+    .contact-card p {
+      margin-bottom: 0;
+      font-size: 0.95rem;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="index.html" class="brand">
+      <img src="logo.png" alt="Happido Logo">
+      <span>Happido</span>
+    </a>
+    <a href="index.html" style="font-weight: 600;">&larr; Back to Home</a>
+  </header>
+
+  <main class="container">
+    <h1>Contact & Support</h1>
+    <p>We are here to assist customers, restaurant partners, and riders 24/7.</p>
+
+    <div class="contact-card">
+      <h3>Customer Support Email</h3>
+      <p><a href="mailto:support@happido.in">support@happido.in</a></p>
+    </div>
+
+    <div class="contact-card">
+      <h3>Developer & Compliance Enquiries</h3>
+      <p><a href="mailto:happiido@gmail.com">happiido@gmail.com</a></p>
+    </div>
+
+    <div class="contact-card">
+      <h3>Merchant & Restaurant Partnerships</h3>
+      <p><a href="mailto:partners@happido.in">partners@happido.in</a></p>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Happido Technologies. All rights reserved.
+  </footer>
+
+</body>
+</html>
