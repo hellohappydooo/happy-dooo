@@ -44,7 +44,7 @@
       box-sizing: border-box;
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
-      cursor: none; /* Custom fluid cursor */
+      cursor: none;
     }
 
     html, body {
@@ -385,7 +385,7 @@
       position: relative;
     }
     .story-left {
-      max-width: 620px;
+      max-width: 600px;
       z-index: 15;
     }
     .story-chapter-tag {
@@ -446,7 +446,7 @@
       color: var(--text-muted);
       line-height: 1.65;
       margin-bottom: 36px;
-      max-width: 540px;
+      max-width: 520px;
     }
 
     /* Price & 20-Min Guarantee Flash Row */
@@ -486,7 +486,7 @@
       color: var(--text-muted);
     }
 
-    /* 3D Tilted Device Showcase with Screen Swapper */
+    /* 3D Tilted Device Showcase */
     .story-device-wrapper {
       position: relative;
       perspective: 1200px;
@@ -524,7 +524,6 @@
       object-fit: cover;
       border-radius: 36px;
       display: block;
-      transition: opacity 0.4s;
     }
 
     /* Floating Status Badges on the Phone */
@@ -613,7 +612,7 @@
       gap: 8px;
     }
 
-    /* Ride Booking Quick Route Simulation Box */
+    /* Ride Route Simulation Box */
     .ride-simulation-box {
       background: var(--surface);
       border: 1px solid rgba(255, 90, 54, 0.3);
@@ -687,7 +686,7 @@
       transform: translateX(4px);
     }
 
-    /* Section 5: All 3 App Downloads Showcase */
+    /* Section 4: All 3 App Downloads Showcase */
     .apps-ecosystem-section {
       min-height: 100vh;
       padding: 140px 6%;
@@ -1304,7 +1303,7 @@
 
   </div>
 
-  <!-- Master 3D WebGL Storytelling Engine -->
+  <!-- Master High-Fidelity 3D WebGL Engine with Photorealistic Render Shaders -->
   <script>
     // -------------------------------------------------------------
     // 1. Fluid Custom Magnetic Cursor
@@ -1331,7 +1330,7 @@
     });
 
     // -------------------------------------------------------------
-    // 2. Web Audio Sound Engine (Synthesized, No External Files)
+    // 2. Web Audio Sound Engine
     // -------------------------------------------------------------
     let audioCtx = null;
     let soundEnabled = false;
@@ -1387,8 +1386,8 @@
       setTimeout(() => playSynthTone(440, 'sawtooth', 0.3, 0.12), 150);
 
       // Pulse 3D Heart SOS model
-      if (heartGroup) {
-        gsap.to(heartGroup.scale, { x: 1.8, y: 1.8, z: 1.8, duration: 0.3, yoyo: true, repeat: 3 });
+      if (meshHeart) {
+        gsap.to(meshHeart.scale, { x: 1.35, y: 1.35, z: 1.35, duration: 0.35, yoyo: true, repeat: 3 });
       }
     };
 
@@ -1408,7 +1407,7 @@
     requestAnimationFrame(raf);
 
     // -------------------------------------------------------------
-    // 5. Three.js Universe & Narrative 3D Models
+    // 5. Three.js Universe & Photorealistic 3D Renders Setup
     // -------------------------------------------------------------
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
@@ -1425,166 +1424,120 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
+    renderer.toneMappingExposure = 1.3;
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // Cinematic Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0x60a5fa, 3.8);
-    keyLight.position.set(25, 30, 25);
+    const keyLight = new THREE.DirectionalLight(0x60a5fa, 2.5);
+    keyLight.position.set(20, 25, 20);
     scene.add(keyLight);
 
-    const redRimLight = new THREE.DirectionalLight(0xef4444, 2.5);
-    redRimLight.position.set(-25, -20, -10);
-    scene.add(redRimLight);
+    const fillLight = new THREE.DirectionalLight(0xff5a36, 1.8);
+    fillLight.position.set(-20, -15, 10);
+    scene.add(fillLight);
 
     const masterGroup = new THREE.Group();
     scene.add(masterGroup);
 
-    // A. 3D FOOD ENGINE (Chapter 1)
-    const foodGroup = new THREE.Group();
-    masterGroup.add(foodGroup);
-
-    // Burger Model
-    function createBurger() {
-      const b = new THREE.Group();
-      const bunGeo = new THREE.SphereGeometry(2.4, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
-      const bunMat = new THREE.MeshStandardMaterial({ color: 0xc87d32, roughness: 0.35 });
-      const top = new THREE.Mesh(bunGeo, bunMat);
-      top.scale.set(1, 0.65, 1);
-      top.position.y = 1.0;
-      b.add(top);
-
-      // Cheese
-      const cheese = new THREE.Mesh(
-        new THREE.BoxGeometry(3.4, 0.15, 3.4),
-        new THREE.MeshStandardMaterial({ color: 0xffb703, roughness: 0.25 })
-      );
-      cheese.rotation.y = Math.PI / 6;
-      cheese.position.y = 0.4;
-      b.add(cheese);
-
-      // Patty
-      const patty = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.2, 2.2, 0.7, 32),
-        new THREE.MeshStandardMaterial({ color: 0x4a2810, roughness: 0.8 })
-      );
-      b.add(patty);
-
-      // Bottom
-      const bot = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.1, 1.9, 0.7, 32),
-        bunMat
-      );
-      bot.position.y = -0.7;
-      b.add(bot);
-
-      b.position.set(12, 2, 4);
-      return b;
+    // Function to load transparent texture by keying out black
+    function loadAlphaTexture(url, callback) {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.width;
+        c.height = img.height;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, c.width, c.height);
+        const d = imgData.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const maxVal = Math.max(d[i], Math.max(d[i + 1], d[i + 2]));
+          if (maxVal < 14) {
+            d[i + 3] = 0;
+          } else if (maxVal < 42) {
+            d[i + 3] = Math.round(((maxVal - 14) / 28) * 255);
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        const tex = new THREE.CanvasTexture(c);
+        tex.generateMipmaps = true;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        callback(tex);
+      };
+      img.src = url;
     }
-    const burger = createBurger();
-    foodGroup.add(burger);
 
-    // B. 3D MOBILITY / SCOOTER ENGINE (Chapter 2)
-    const rideGroup = new THREE.Group();
-    masterGroup.add(rideGroup);
+    // 3D Objects References
+    let meshBurger = null;
+    let meshPizza = null;
+    let meshScooter = null;
+    let meshHeart = null;
 
-    function createMobilityPod() {
-      const g = new THREE.Group();
-
-      // Futuristic Aerodynamic Courier Vehicle Body
-      const bodyGeo = new THREE.CylinderGeometry(1.6, 2.2, 7.5, 32);
-      const bodyMat = new THREE.MeshPhysicalMaterial({
-        color: 0xff5a36,
-        metalness: 0.85,
-        roughness: 0.2,
-        clearcoat: 0.8
+    // 1. Photorealistic 3D Burger Mesh
+    loadAlphaTexture('render_burger.jpg', (tex) => {
+      const geo = new THREE.PlaneGeometry(15.5, 15.5);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
       });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.rotation.z = Math.PI / 2;
-      g.add(body);
+      meshBurger = new THREE.Mesh(geo, mat);
+      // Positioned strategically on the right behind the phone with glorious rim lighting
+      meshBurger.position.set(13.5, 2, 4);
+      meshBurger.rotation.set(-0.1, -0.25, 0.08);
+      masterGroup.add(meshBurger);
+    });
 
-      // Glowing Neon Wheels
-      const wheelGeo = new THREE.TorusGeometry(1.6, 0.35, 16, 32);
-      const wheelMat = new THREE.MeshStandardMaterial({
-        color: 0x0ea5e9,
-        emissive: 0x0284c7,
-        emissiveIntensity: 0.8,
-        metalness: 0.9
+    // 2. Photorealistic 3D Pizza Slice Mesh
+    loadAlphaTexture('render_pizza.jpg', (tex) => {
+      const geo = new THREE.PlaneGeometry(13, 13);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
       });
-      const frontWheel = new THREE.Mesh(wheelGeo, wheelMat);
-      frontWheel.position.set(-3.2, -1.5, 0);
-      g.add(frontWheel);
+      meshPizza = new THREE.Mesh(geo, mat);
+      meshPizza.position.set(18.5, -7, 6);
+      meshPizza.rotation.set(0.15, -0.3, -0.15);
+      masterGroup.add(meshPizza);
+    });
 
-      const rearWheel = frontWheel.clone();
-      rearWheel.position.set(3.2, -1.5, 0);
-      g.add(rearWheel);
-
-      // Headlight Beam
-      const lightGeo = new THREE.ConeGeometry(1.2, 3.5, 32);
-      const lightMat = new THREE.MeshBasicMaterial({ color: 0xffedd5, transparent: true, opacity: 0.35 });
-      const headlight = new THREE.Mesh(lightGeo, lightMat);
-      headlight.rotation.z = -Math.PI / 2;
-      headlight.position.set(-5.0, 0, 0);
-      g.add(headlight);
-
-      g.position.set(-25, 0, -10); // Starts offscreen, swoops in for Chapter 2
-      g.scale.set(0.9, 0.9, 0.9);
-      return g;
-    }
-    const ridePod = createMobilityPod();
-    rideGroup.add(ridePod);
-
-    // C. 3D EMERGENCY BLOOD SOS HEART ENGINE (Chapter 3)
-    const heartGroup = new THREE.Group();
-    masterGroup.add(heartGroup);
-
-    function createBloodSOSBeacon() {
-      const g = new THREE.Group();
-
-      // Sculpted 3D Crimson Blood Drop & Heart Geometry
-      const heartShape = new THREE.Shape();
-      heartShape.moveTo(0, 1.5);
-      heartShape.bezierCurveTo(0, 2.8, -2.5, 3.2, -2.5, 1.2);
-      heartShape.bezierCurveTo(-2.5, -0.8, 0, -2.5, 0, -3.2);
-      heartShape.bezierCurveTo(0, -2.5, 2.5, -0.8, 2.5, 1.2);
-      heartShape.bezierCurveTo(2.5, 3.2, 0, 2.8, 0, 1.5);
-
-      const extrudeSettings = { depth: 1.5, bevelEnabled: true, bevelSegments: 4, steps: 2, bevelSize: 0.4, bevelThickness: 0.4 };
-      const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
-      const heartMat = new THREE.MeshPhysicalMaterial({
-        color: 0xdc2626,
-        emissive: 0x991b1b,
-        emissiveIntensity: 0.6,
-        roughness: 0.15,
-        metalness: 0.3,
-        transmission: 0.5,
-        clearcoat: 1.0
+    // 3. Photorealistic 3D Electric Urban Scooter Mesh
+    loadAlphaTexture('render_scooter.jpg', (tex) => {
+      const geo = new THREE.PlaneGeometry(17, 17);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
       });
-      const heart = new THREE.Mesh(heartGeo, heartMat);
-      heart.rotation.z = Math.PI;
-      g.add(heart);
+      meshScooter = new THREE.Mesh(geo, mat);
+      meshScooter.position.set(35, -2, -10); // Hidden offscreen until Chapter 2
+      meshScooter.rotation.set(0.05, -0.2, 0.02);
+      masterGroup.add(meshScooter);
+    });
 
-      // Expanding Radar Sonar Waves
-      const radarGeo = new THREE.TorusGeometry(4.8, 0.12, 16, 64);
-      const radarMat = new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.7 });
-      const radarWave1 = new THREE.Mesh(radarGeo, radarMat);
-      radarWave1.rotation.x = Math.PI / 2;
-      g.add(radarWave1);
+    // 4. Photorealistic 3D Glowing Ruby Crystal Heart SOS Mesh
+    loadAlphaTexture('render_heart_sos.jpg', (tex) => {
+      const geo = new THREE.PlaneGeometry(16, 16);
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      meshHeart = new THREE.Mesh(geo, mat);
+      meshHeart.position.set(35, -4, -15); // Hidden offscreen until Chapter 3
+      meshHeart.rotation.set(0, 0, 0);
+      masterGroup.add(meshHeart);
+    });
 
-      const radarWave2 = radarWave1.clone();
-      radarWave2.scale.set(1.4, 1.4, 1.4);
-      g.add(radarWave2);
-
-      g.position.set(25, -5, -15); // Starts offscreen, swoops in for Chapter 3
-      return g;
-    }
-    const bloodSOS = createBloodSOSBeacon();
-    heartGroup.add(bloodSOS);
-
-    // 2,000 Cosmic Dust Particles
-    const pCount = 2000;
+    // 2,200 Cosmic Shimmer Particles
+    const pCount = 2200;
     const pGeo = new THREE.BufferGeometry();
     const pCoords = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount * 3; i++) {
@@ -1595,14 +1548,14 @@
       size: 0.45,
       color: 0x93c5fd,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.55,
       blending: THREE.AdditiveBlending
     });
     const pSystem = new THREE.Points(pGeo, pMat);
     scene.add(pSystem);
 
     // -------------------------------------------------------------
-    // 6. GSAP ScrollTrigger Story Choreography
+    // 6. GSAP ScrollTrigger Narrative Choreography
     // -------------------------------------------------------------
     gsap.registerPlugin(ScrollTrigger);
     lenis.on('scroll', ScrollTrigger.update);
@@ -1644,28 +1597,58 @@
       }
     });
 
-    // Camera & 3D Object Timeline
+    // Animate the real 3D assets on scroll:
     tl3d
-      // Chapter 1 -> 2: Food rotates aside, Ride Scooter speeds to center
-      .to(foodGroup.position, { x: 25, y: 10, z: -15, ease: "none" }, 0.3)
-      .to(foodGroup.rotation, { y: 2.5, ease: "none" }, 0.3)
-      .to(rideGroup.position, { x: 10, y: -2, z: 6, ease: "none" }, 0.3)
-      .to(rideGroup.rotation, { y: -0.6, ease: "none" }, 0.3)
-      .to(camera.position, { z: 32, ease: "none" }, 0.3)
+      // Chapter 1 -> Chapter 2:
+      // Burger & Pizza slide away to the right/top, Scooter glides right into spotlight
+      .to(masterGroup.position, { x: 0, y: 0, z: 0, ease: "none" }, 0)
+      .add(() => {}, 0.25)
 
-      // Chapter 2 -> 3: Ride zooms out, Emergency Blood Heart pulses front and center
-      .to(rideGroup.position, { x: -25, y: -10, z: -20, ease: "none" }, 0.65)
-      .to(heartGroup.position, { x: 10, y: 0, z: 8, ease: "none" }, 0.65)
-      .to(heartGroup.rotation, { y: 3.14, ease: "none" }, 0.65)
-      .to(camera.position, { z: 26, ease: "none" }, 0.65)
+    // Dynamic scroll timeline hooks
+    ScrollTrigger.create({
+      trigger: "#rides",
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => {
+        if (meshBurger) gsap.to(meshBurger.position, { x: 38, y: 15, z: -10, duration: 1.2, ease: "power2.out" });
+        if (meshPizza) gsap.to(meshPizza.position, { x: 42, y: -18, z: -12, duration: 1.2, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 13, y: 1, z: 5, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: -5, z: -15, duration: 0.8 });
+      },
+      onLeaveBack: () => {
+        if (meshBurger) gsap.to(meshBurger.position, { x: 13.5, y: 2, z: 4, duration: 1.2, ease: "power2.out" });
+        if (meshPizza) gsap.to(meshPizza.position, { x: 18.5, y: -7, z: 6, duration: 1.2, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 35, y: -2, z: -10, duration: 1.0, ease: "power2.out" });
+      }
+    });
 
-      // Chapter 3 -> 4: All models orbit for grand apps finale
-      .to(heartGroup.position, { x: 0, y: -15, z: -25, ease: "none" }, 1.0)
-      .to(masterGroup.rotation, { y: 6.28, ease: "none" }, 1.0)
-      .to(camera.position, { z: 40, ease: "none" }, 1.0);
+    ScrollTrigger.create({
+      trigger: "#emergency",
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => {
+        if (meshScooter) gsap.to(meshScooter.position, { x: -30, y: -10, z: -15, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 13, y: 0, z: 6, duration: 1.2, ease: "power2.out" });
+      },
+      onLeaveBack: () => {
+        if (meshScooter) gsap.to(meshScooter.position, { x: 13, y: 1, z: 5, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: -5, z: -15, duration: 1.0, ease: "power2.out" });
+      }
+    });
+
+    ScrollTrigger.create({
+      trigger: "#apps",
+      start: "top center",
+      onEnter: () => {
+        if (meshHeart) gsap.to(meshHeart.position, { x: 0, y: -20, z: -25, duration: 1.2 });
+      },
+      onLeaveBack: () => {
+        if (meshHeart) gsap.to(meshHeart.position, { x: 13, y: 0, z: 6, duration: 1.2 });
+      }
+    });
 
     // -------------------------------------------------------------
-    // 7. Continuous 60 FPS Render Loop
+    // 7. Continuous 60 FPS Render Loop & Physics
     // -------------------------------------------------------------
     const clock = new THREE.Clock();
     let frameCount = 0;
@@ -1690,24 +1673,35 @@
       ringY += (mouseY - ringY) * 0.18;
       ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
 
-      // Idle Rotations & Physics
-      burger.rotation.y += 0.01;
-      burger.position.y = 2 + Math.sin(delta * 1.8) * 0.4;
+      // Harmonious Floating & Idle Hover Physics
+      if (meshBurger) {
+        meshBurger.position.y += Math.sin(delta * 1.8) * 0.015;
+        meshBurger.rotation.z = 0.08 + Math.cos(delta * 1.2) * 0.03;
+      }
 
-      ridePod.rotation.y += 0.008;
-      ridePod.position.y = Math.sin(delta * 2.2) * 0.3;
+      if (meshPizza) {
+        meshPizza.position.y += Math.cos(delta * 1.6) * 0.018;
+        meshPizza.rotation.z = -0.15 + Math.sin(delta * 1.4) * 0.03;
+      }
 
-      bloodSOS.rotation.y = Math.PI + Math.sin(delta * 1.5) * 0.2;
-      bloodSOS.position.y = Math.cos(delta * 2.0) * 0.35;
+      if (meshScooter) {
+        meshScooter.position.y += Math.sin(delta * 2.0) * 0.02;
+        meshScooter.rotation.y = -0.2 + Math.sin(delta * 1.5) * 0.04;
+      }
 
-      // Mouse Parallax
+      if (meshHeart) {
+        meshHeart.position.y += Math.cos(delta * 1.9) * 0.02;
+        meshHeart.rotation.z = Math.sin(delta * 1.6) * 0.03;
+      }
+
+      // Mouse Parallax on Master 3D Group
       const normX = (mouseX / window.innerWidth - 0.5) * 2;
       const normY = (mouseY / window.innerHeight - 0.5) * 2;
-      masterGroup.rotation.y += normX * 0.001;
-      masterGroup.rotation.x += normY * 0.001;
+      masterGroup.rotation.y += (normX * 0.06 - masterGroup.rotation.y) * 0.04;
+      masterGroup.rotation.x += (-normY * 0.04 - masterGroup.rotation.x) * 0.04;
 
-      // Star drift
-      pSystem.rotation.y = delta * 0.015;
+      // Starfield gentle drift
+      pSystem.rotation.y = delta * 0.012;
 
       renderer.render(scene, camera);
     }
