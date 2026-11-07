@@ -3,52 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#030406">
-  <title>Happido — 3D Hyperlocal Experience</title>
-  <meta name="description" content="Happido turns everyday dining and hyperlocal deliveries into an interactive, 3-dimensional experience.">
+  <meta name="theme-color" content="#070707">
+  <title>Happido — Spatial Hyperlocal Delivery Experience</title>
+  <meta name="description" content="Happido transforms food delivery, groceries, and fleet logistics into an interactive scroll-driven 3D universe.">
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Three.js + GSAP for true interactive 3D WebGL -->
+  <!-- Three.js + GSAP + ScrollTrigger + Lenis Smooth Scrolling (Exact Stack of Lorenzo Lottici) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
-  <!-- High-end Typefaces: Syne Display + Space Grotesk -->
+  <!-- JetBrains Mono + Archivo + Syne: Italian Design Studio Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #030406;
-      --card-bg: rgba(12, 16, 26, 0.65);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(32, 138, 239, 0.4);
+      --fondo: #070707;
+      --pietra: #0e1117;
+      --avorio: #F0EDE8;
+      --avorio-muted: #8E9BAE;
+      --avorio-dim: #4B5563;
       --blue: #208AEF;
       --cyan: #38BDF8;
       --orange: #FF5A36;
-      --text: #F8FAFC;
-      --muted: #8E9BAE;
-      --dim: #4B5563;
+      --border-thin: rgba(240, 237, 232, 0.12);
+      --border-glow: rgba(32, 138, 239, 0.4);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Space Grotesk', -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
+    html.lenis {
+      height: auto;
+    }
+
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: var(--fondo);
+      color: var(--avorio);
+      font-family: 'JetBrains Mono', monospace;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Fixed Interactive 3D WebGL Canvas */
-    #webgl-canvas {
+    /* Fixed Fullscreen WebGL 3D Canvas */
+    #canvas3d {
       position: fixed;
       top: 0;
       left: 0;
@@ -58,8 +63,8 @@
       pointer-events: none;
     }
 
-    /* Film Grain & Cinematic Lighting */
-    .grain {
+    /* Lorenzo Paper Texture & Film Noise */
+    .film-grain {
       position: fixed;
       top: 0;
       left: 0;
@@ -67,8 +72,8 @@
       height: 100%;
       pointer-events: none;
       z-index: 999;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
     .vignette {
@@ -79,471 +84,427 @@
       height: 100%;
       pointer-events: none;
       z-index: 2;
-      background: radial-gradient(circle at center, transparent 30%, rgba(3, 4, 6, 0.8) 100%);
+      background: radial-gradient(circle at center, transparent 35%, rgba(7, 7, 7, 0.88) 100%);
     }
 
-    /* Header */
-    .site-nav {
+    /* Fixed Top Architectural Navigation (Lorenzo Style) */
+    .top-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 100;
-      padding: 24px 6%;
+      padding: 20px 4vw;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(3, 4, 6, 0.4);
+      background: rgba(7, 7, 7, 0.6);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-thin);
     }
     .brand-link {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
-      color: #FFFFFF;
+      color: var(--avorio);
     }
     .brand-link img {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
     }
-    .brand-text {
+    .brand-title {
       font-family: 'Syne', sans-serif;
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
-    .nav-center {
+    .header-coords {
       font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 2px;
+      letter-spacing: 1.8px;
+      color: var(--avorio-dim);
       text-transform: uppercase;
-      color: var(--dim);
     }
-    .nav-actions {
+    .header-menu {
       display: flex;
       align-items: center;
       gap: 28px;
     }
-    .nav-actions a {
-      color: var(--muted);
+    .header-menu a {
+      color: var(--avorio-muted);
       text-decoration: none;
-      font-size: 0.84rem;
-      font-weight: 600;
-      letter-spacing: 1px;
+      font-size: 0.78rem;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       transition: color 0.2s;
     }
-    .nav-actions a:hover {
-      color: #FFFFFF;
+    .header-menu a:hover {
+      color: var(--avorio);
     }
-    .btn-pill {
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #FFFFFF !important;
-      padding: 8px 20px;
-      border-radius: 99px;
-      transition: all 0.25s;
+    .btn-contact {
+      border: 1px solid var(--border-thin);
+      padding: 6px 16px;
+      border-radius: 4px;
+      color: var(--avorio) !important;
+      transition: all 0.2s !important;
     }
-    .btn-pill:hover {
-      background: #FFFFFF;
-      color: #000000 !important;
+    .btn-contact:hover {
+      background: var(--avorio);
+      color: var(--fondo) !important;
     }
 
-    /* Scrollable Content Container */
-    .viewport-content {
+    /* Fixed Floating HUD Coordinates & Scroll Counter (Lorenzo Lottici Style) */
+    .hud-left {
+      position: fixed;
+      bottom: 30px;
+      left: 4vw;
+      z-index: 50;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      color: var(--avorio-dim);
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .hud-left span {
+      color: var(--avorio);
+      font-weight: 700;
+    }
+    .hud-right {
+      position: fixed;
+      bottom: 30px;
+      right: 4vw;
+      z-index: 50;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* Storytelling Scroll Canvas Sections */
+    .main-scroll-track {
       position: relative;
       z-index: 10;
-      pointer-events: auto;
     }
 
-    .container {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 0 6%;
-    }
-
-    /* Hero Section */
-    .hero-view {
+    .scroll-section {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-top: 100px;
+      padding: 120px 8vw;
       position: relative;
     }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.78rem;
-      font-weight: 700;
+
+    .sec-kicker {
+      font-size: 0.76rem;
       letter-spacing: 2.5px;
       text-transform: uppercase;
       color: var(--blue);
       margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .badge-bar {
+    .sec-kicker::before {
+      content: '';
       width: 20px;
-      height: 2px;
+      height: 1px;
       background: var(--blue);
     }
-    .hero-title {
+
+    /* Lorenzo Giant Architectural Typographic Titles */
+    .giant-title {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(3.8rem, 9vw, 8.5rem);
+      font-size: clamp(3.6rem, 9.5vw, 8.5rem);
       font-weight: 900;
       line-height: 0.9;
       letter-spacing: -3.5px;
       text-transform: uppercase;
-      color: #FFFFFF;
+      color: var(--avorio);
       margin-bottom: 40px;
     }
-    .hero-title span {
-      background: linear-gradient(135deg, #FFFFFF 30%, #38BDF8 70%, #FF5A36 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .giant-title em {
+      font-style: normal;
+      color: var(--blue);
+      text-shadow: 0 0 50px rgba(32, 138, 239, 0.4);
     }
-    .hero-footer-grid {
+
+    .split-content {
       display: grid;
       grid-template-columns: 1.3fr 1fr;
       gap: 60px;
       align-items: flex-end;
     }
-    .hero-desc {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.25rem;
-      color: var(--muted);
+    .body-lead {
+      font-family: 'Archivo', sans-serif;
+      font-size: 1.3rem;
+      color: var(--avorio-muted);
       line-height: 1.7;
+      max-width: 620px;
     }
-    .hero-desc strong {
-      color: #FFFFFF;
+    .body-lead strong {
+      color: var(--avorio);
     }
 
-    .hero-cta {
+    /* Lorenzo Wireframe Action Buttons */
+    .action-group {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 14px;
+      gap: 16px;
     }
-    .btn-3d {
+    .btn-wire {
       display: inline-flex;
       align-items: center;
-      gap: 14px;
-      background: #FFFFFF;
-      color: #030406;
+      gap: 16px;
+      background: var(--avorio);
+      color: var(--fondo);
       text-decoration: none;
-      padding: 16px 32px;
-      border-radius: 99px;
+      padding: 16px 36px;
       font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 4px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 0 40px rgba(32, 138, 239, 0.4);
     }
-    .btn-3d:hover {
+    .btn-wire:hover {
       background: var(--blue);
       color: #FFFFFF;
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 0 60px rgba(32, 138, 239, 0.7);
+      transform: translateY(-4px);
+      box-shadow: 0 0 40px rgba(32, 138, 239, 0.6);
     }
-    .btn-3d svg {
+    .btn-wire svg {
       width: 22px;
       height: 22px;
     }
-    .scroll-hint {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      color: var(--dim);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-top: 60px;
-    }
-    .scroll-line {
-      width: 50px;
-      height: 1px;
-      background: var(--dim);
-      position: relative;
-      overflow: hidden;
-    }
-    .scroll-line::after {
-      content: '';
-      position: absolute;
-      left: -100%;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: #FFFFFF;
-      animation: scanLine 2s infinite;
-    }
-    @keyframes scanLine {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
 
-    /* 3D Dynamic Card Matrix Section */
-    .section-stage {
-      padding: 120px 0;
-      border-top: 1px solid var(--border);
-    }
-    .section-title-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 70px;
-    }
-    .section-heading {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 900;
-      letter-spacing: -2px;
-      text-transform: uppercase;
-      line-height: 1;
-      color: #FFFFFF;
-    }
-    .section-counter {
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--dim);
-    }
-
-    /* Grubo-style 3D Numbered Cards with Hover Perspective */
-    .tiles-grid {
+    /* Interactive 3D Cards Matrix with Floating Wireframes */
+    .cards-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
-      perspective: 1000px;
+      gap: 28px;
+      margin-top: 50px;
     }
-    .tilt-card {
+    .story-card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 44px 36px;
+      border: 1px solid var(--border-thin);
+      padding: 40px 32px;
+      border-radius: 12px;
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      transform-style: preserve-3d;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 420px;
+      min-height: 400px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
       cursor: pointer;
     }
-    .tilt-card:hover {
+    .story-card:hover {
       border-color: var(--border-glow);
-      transform: translateY(-10px) rotateX(4deg) rotateY(-4deg);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(32, 138, 239, 0.15);
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(32, 138, 239, 0.2);
     }
-    .card-top {
+    .story-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
-    .card-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
+    .story-index {
+      font-size: 0.85rem;
+      font-weight: 700;
       color: var(--blue);
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
-    .card-arrow {
-      font-size: 1.8rem;
-      color: var(--muted);
-      transition: transform 0.3s, color 0.3s;
+    .story-arrow {
+      font-size: 1.4rem;
+      color: var(--avorio-muted);
+      transition: transform 0.25s, color 0.25s;
     }
-    .tilt-card:hover .card-arrow {
-      transform: translate(6px, -6px);
-      color: #FFFFFF;
+    .story-card:hover .story-arrow {
+      transform: translate(4px, -4px);
+      color: var(--avorio);
     }
-    .card-title {
+    .story-title {
       font-family: 'Syne', sans-serif;
-      font-size: 2.1rem;
+      font-size: 1.85rem;
       font-weight: 800;
+      color: var(--avorio);
       letter-spacing: -0.5px;
       text-transform: uppercase;
-      color: #FFFFFF;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       line-height: 1.1;
     }
-    .card-desc {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: var(--muted);
-      font-size: 1rem;
+    .story-desc {
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.95rem;
+      color: var(--avorio-muted);
       line-height: 1.7;
       margin-bottom: 24px;
     }
-    .card-footer {
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
+    .story-meta {
+      padding-top: 18px;
+      border-top: 1px solid var(--border-thin);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
-      letter-spacing: 1px;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: var(--dim);
-      font-weight: 700;
+      color: var(--avorio-dim);
     }
 
-    /* 3D Gallery Stage */
-    .gallery-grid {
+    /* Spatial Screen Portals */
+    .portals-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 32px;
-      margin-top: 40px;
+      margin-top: 60px;
     }
-    .gallery-frame {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 20px;
+    .portal-box {
+      border: 1px solid var(--border-thin);
+      border-radius: 12px;
+      background: rgba(14, 17, 23, 0.5);
       backdrop-filter: blur(20px);
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
+      padding: 16px;
+      transition: all 0.4s;
     }
-    .gallery-frame:hover {
-      transform: translateY(-8px);
-      border-color: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+    .portal-box:hover {
+      border-color: var(--avorio);
+      transform: translateY(-6px);
     }
-    .gallery-screen {
+    .portal-screen {
       width: 100%;
-      height: 480px;
-      border-radius: 18px;
+      height: 460px;
+      border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 22px;
-      background: #000000;
+      background: #000;
+      margin-bottom: 20px;
     }
-    .gallery-screen img {
+    .portal-screen img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .gallery-frame:hover .gallery-screen img {
-      transform: scale(1.05);
+    .portal-box:hover .portal-screen img {
+      transform: scale(1.04);
     }
-    .gallery-info h4 {
+    .portal-head {
       font-family: 'Syne', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      color: #FFFFFF;
+      letter-spacing: -0.3px;
       text-transform: uppercase;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
+      color: var(--avorio);
+      margin-bottom: 4px;
     }
-    .gallery-info p {
-      font-size: 0.88rem;
-      color: var(--muted);
+    .portal-caption {
+      font-size: 0.75rem;
+      letter-spacing: 1.2px;
+      color: var(--avorio-dim);
+      text-transform: uppercase;
     }
 
-    /* Massive Cinematic Grubo Contact Section */
-    .giant-footer {
-      border-top: 1px solid var(--border);
-      padding: 120px 0 60px;
-      background: #010204;
-      position: relative;
+    /* Massive Editorial Contact Section */
+    .contact-stage {
+      padding: 140px 8vw 60px;
+      border-top: 1px solid var(--border-thin);
+      background: #030406;
     }
-    .giant-headline {
+    .contact-huge {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(3.2rem, 8vw, 7.5rem);
+      font-size: clamp(3.5rem, 8.5vw, 8rem);
       font-weight: 900;
       line-height: 0.92;
-      letter-spacing: -3.5px;
+      letter-spacing: -3px;
       text-transform: uppercase;
-      color: #FFFFFF;
+      color: var(--avorio);
       margin-bottom: 60px;
     }
-    .giant-headline em {
+    .contact-huge em {
       font-style: normal;
       color: var(--blue);
       text-shadow: 0 0 60px rgba(32, 138, 239, 0.6);
     }
-    .contact-row {
+    .contact-links-grid {
       display: flex;
-      gap: 24px;
-      margin-bottom: 90px;
+      gap: 28px;
+      margin-bottom: 100px;
       flex-wrap: wrap;
     }
-    .btn-contact-tile {
+    .contact-slot {
       display: inline-flex;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
       padding: 24px 36px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      border: 1px solid var(--border-thin);
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.02);
       text-decoration: none;
-      color: #FFFFFF;
-      font-size: 1.3rem;
-      font-weight: 700;
+      color: var(--avorio);
+      font-size: 1.15rem;
+      font-weight: 600;
       transition: all 0.3s;
     }
-    .btn-contact-tile:hover {
+    .contact-slot:hover {
       border-color: var(--blue);
-      background: rgba(32, 138, 239, 0.1);
-      box-shadow: 0 0 40px rgba(32, 138, 239, 0.3);
+      background: rgba(32, 138, 239, 0.08);
       transform: translateY(-3px);
     }
-    .btn-contact-tile svg {
+    .contact-slot svg {
       width: 24px;
       height: 24px;
       stroke: currentColor;
     }
 
     .footer-bar {
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--border-thin);
       padding-top: 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: var(--dim);
+      color: var(--avorio-dim);
     }
     .footer-bar a {
-      color: var(--muted);
+      color: var(--avorio-muted);
       text-decoration: none;
       transition: color 0.2s;
     }
     .footer-bar a:hover {
-      color: #FFFFFF;
+      color: var(--avorio);
     }
 
     @media (max-width: 960px) {
-      .hero-footer-grid {
+      .split-content {
         grid-template-columns: 1fr;
       }
-      .tiles-grid, .gallery-grid {
+      .cards-row, .portals-row {
         grid-template-columns: 1fr;
       }
-      .site-nav .nav-center {
+      .top-header .header-coords {
         display: none;
       }
     }
     @media (max-width: 600px) {
-      .site-nav .nav-actions {
+      .top-header .header-menu {
         display: none;
       }
-      .hero-title {
+      .giant-title, .contact-huge {
         font-size: 3.2rem;
         letter-spacing: -1.5px;
       }
-      .giant-headline {
-        letter-spacing: -1.5px;
-      }
-      .contact-row {
+      .contact-links-grid {
         flex-direction: column;
       }
     }
@@ -551,334 +512,387 @@
 </head>
 <body>
 
-  <!-- WebGL 3D Canvas Background -->
-  <canvas id="webgl-canvas"></canvas>
+  <!-- Fullscreen 3D Scene Canvas -->
+  <canvas id="canvas3d"></canvas>
 
-  <!-- Film Grain & Lighting Overlays -->
-  <div class="grain"></div>
+  <!-- Film Noise & Edge Vignette -->
+  <div class="film-grain"></div>
   <div class="vignette"></div>
 
-  <!-- Editorial Top Navigation -->
-  <nav class="site-nav">
+  <!-- Top Fixed Header -->
+  <header class="top-header">
     <a href="index.html" class="brand-link">
       <img src="logo.png" alt="Happido">
-      <span class="brand-text">HAPPIDO</span>
+      <span class="brand-title">HAPPIDO</span>
     </a>
 
-    <div class="nav-center">
-      INTERACTIVE 3D PLATFORM / INDIA
+    <div class="header-coords">
+      [ 12° 58' N · 77° 35' E ] HYPERLOCAL 3D
     </div>
 
-    <div class="nav-actions">
-      <a href="#work">ECOSYSTEM</a>
-      <a href="#screens">GALLERY</a>
+    <nav class="header-menu">
+      <a href="#architecture">SYSTEM</a>
+      <a href="#portals">INTERFACES</a>
       <a href="privacy.html">PRIVACY</a>
       <a href="delete-account.html">DELETION</a>
-      <a href="contact.html" class="btn-pill">CONTACT ↗</a>
-    </div>
-  </nav>
+      <a href="contact.html" class="btn-contact">CONTACT ↗</a>
+    </nav>
+  </header>
 
-  <!-- Main Viewport Content -->
-  <div class="viewport-content">
+  <!-- Floating HUD Indicators (Lorenzo Style) -->
+  <div class="hud-left">
+    <div>STAGE / <span id="hud-stage">01 INTRO</span></div>
+    <div>CAM / <span id="hud-cam">Z: 38.0</span></div>
+  </div>
 
-    <!-- Hero Section -->
-    <div class="container">
-      <section class="hero-view">
-        <div class="hero-badge">
-          <div class="badge-bar"></div>
-          AUTONOMOUS HYPERLOCAL PLATFORM
+  <div class="hud-right" id="hud-pct">
+    000%
+  </div>
+
+  <!-- Smooth Scrollable Track Container -->
+  <div class="main-scroll-track">
+
+    <!-- Section 1: Intro / Spatial Launch -->
+    <section class="scroll-section" id="hero">
+      <div class="sec-kicker">SPATIAL LOGISTICS ENGINE</div>
+      
+      <h1 class="giant-title">
+        WE DELIVER<br>
+        <em>INTO SPACE.</em>
+      </h1>
+
+      <div class="split-content">
+        <p class="body-lead">
+          Happido bends time and distance. We orchestrate restaurant culinary arts, grocery depots, and high-precision routing across an interactive 3D universe.
+        </p>
+
+        <div class="action-group">
+          <a href="#architecture" class="btn-wire">
+            <svg viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M3.6 1.8L13.8 12 3.6 22.2c-.3-.3-.6-.8-.6-1.8V3.6c0-1 .3-1.5.6-1.8z"/>
+              <path fill="#FBBC04" d="M17.3 8.6L13.8 12l3.5 3.4 3.9-2.2c1.1-.6 1.1-1.7 0-2.3l-3.9-2.3z"/>
+              <path fill="#EA4335" d="M3.6 1.8l10.2 10.2 3.5-3.4L6.4 2.4C5.8 2 5.1 1.8 4.5 1.8c-.3 0-.6 0-.9 0z"/>
+              <path fill="#34A853" d="M3.6 22.2l13.7-6.8-3.5-3.4L3.6 22.2z"/>
+            </svg>
+            <span>GET IT ON PLAY STORE</span>
+          </a>
+          <span style="font-size: 0.72rem; letter-spacing: 2px; color: var(--avorio-dim); font-weight: 700;">
+            ● PRODUCTION CODE: COM.MSHAPPIDO.CUSTOMER
+          </span>
         </div>
+      </div>
+    </section>
 
-        <h1 class="hero-title">
-          WE DELIVER<br>
-          <span>INTO REALITY.</span>
-        </h1>
+    <!-- Section 2: Architecture / 3D Floating Geometry Morph -->
+    <section class="scroll-section" id="architecture">
+      <div class="sec-kicker">01 / THREE-TIER RUNTIME</div>
+      
+      <h2 class="giant-title" style="font-size: clamp(2.8rem, 6vw, 5.5rem); margin-bottom: 20px;">
+        TRIAD <em>ARCHITECTURE</em>
+      </h2>
+      <p class="body-lead" style="margin-bottom: 40px;">
+        Three dedicated engines synchronizing inventory, dispatch queues, and customer orders at 60 FPS.
+      </p>
 
-        <div class="hero-footer-grid">
-          <p class="hero-desc">
-            Happido connects fine dining, grocery depots, and real-time navigation into a responsive 3D infrastructure. Move your cursor to explore the space.
-          </p>
-
-          <div class="hero-cta">
-            <a href="#work" class="btn-3d">
-              <svg viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M3.6 1.8L13.8 12 3.6 22.2c-.3-.3-.6-.8-.6-1.8V3.6c0-1 .3-1.5.6-1.8z"/>
-                <path fill="#FBBC04" d="M17.3 8.6L13.8 12l3.5 3.4 3.9-2.2c1.1-.6 1.1-1.7 0-2.3l-3.9-2.3z"/>
-                <path fill="#EA4335" d="M3.6 1.8l10.2 10.2 3.5-3.4L6.4 2.4C5.8 2 5.1 1.8 4.5 1.8c-.3 0-.6 0-.9 0z"/>
-                <path fill="#34A853" d="M3.6 22.2l13.7-6.8-3.5-3.4L3.6 22.2z"/>
-              </svg>
-              <span>GET IT ON GOOGLE PLAY</span>
-            </a>
-            <div style="font-size: 0.78rem; letter-spacing: 1.5px; color: var(--dim); text-transform: uppercase; font-weight: 700;">
-              ● PRODUCTION TRACK v1.0.0 ACTIVE
-            </div>
+      <div class="cards-row">
+        <!-- Story Card 1 -->
+        <div class="story-card" onclick="window.location.href='#portals'">
+          <div class="story-top">
+            <span class="story-index">01 / DINING & CARTS</span>
+            <span class="story-arrow">↗</span>
           </div>
-        </div>
-
-        <div class="scroll-hint">
-          <span>SCROLL TO TRAVERSE</span>
-          <div class="scroll-line"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- 3D Architecture Section -->
-    <section class="section-stage" id="work">
-      <div class="container">
-        <div class="section-title-bar">
           <div>
-            <div class="section-counter">01 / THREE-DIMENSIONAL LOGISTICS</div>
-            <h2 class="section-heading">ECOSYSTEM TILES</h2>
+            <h3 class="story-title">CUSTOMER ENGINE</h3>
+            <p class="story-desc">Exploration of artisan menus, sub-second cart checkout, live GPS delivery radar, and instant UPI payment settlements.</p>
           </div>
-          <div style="font-size: 0.85rem; letter-spacing: 2px; color: var(--dim); text-transform: uppercase;">
-            TILT & INTERACT ↗
+          <div class="story-meta">
+            <span>com.mshappido.customer</span>
+            <span style="color: #10B981;">● DEPLOYED</span>
           </div>
         </div>
 
-        <div class="tiles-grid">
-          <!-- Card 1 -->
-          <div class="tilt-card" onclick="window.location.href='#screens'">
-            <div class="card-top">
-              <span class="card-num">01</span>
-              <span class="card-arrow">↗</span>
-            </div>
-            <div>
-              <h3 class="card-title">CUSTOMER APP</h3>
-              <p class="card-desc">Interactive culinary discovery, live 3D cart items, real-time rider tracking, and zero-latency payments.</p>
-            </div>
-            <div class="card-footer">
-              <span>com.mshappido.customer</span>
-              <span style="color: #10B981;">● RELEASE VERIFIED</span>
-            </div>
+        <!-- Story Card 2 -->
+        <div class="story-card" onclick="window.location.href='#portals'">
+          <div class="story-top">
+            <span class="story-index">02 / MERCHANT PORTAL</span>
+            <span class="story-arrow">↗</span>
           </div>
-
-          <!-- Card 2 -->
-          <div class="tilt-card" onclick="window.location.href='#screens'">
-            <div class="card-top">
-              <span class="card-num">02</span>
-              <span class="card-arrow">↗</span>
-            </div>
-            <div>
-              <h3 class="card-title">PARTNER SUITE</h3>
-              <p class="card-desc">Instantaneous kitchen queues, digital menu toggle controls, surge management, and daily financial telemetry.</p>
-            </div>
-            <div class="card-footer">
-              <span>com.mshappido.restaurant</span>
-              <span style="color: #10B981;">● RELEASE VERIFIED</span>
-            </div>
+          <div>
+            <h3 class="story-title">RESTAURANT SUITE</h3>
+            <p class="story-desc">Live kitchen display pipelines, menu catalog toggle switches, surge triggers, and multi-location revenue metrics.</p>
           </div>
+          <div class="story-meta">
+            <span>com.mshappido.restaurant</span>
+            <span style="color: #10B981;">● DEPLOYED</span>
+          </div>
+        </div>
 
-          <!-- Card 3 -->
-          <div class="tilt-card" onclick="window.location.href='#screens'">
-            <div class="card-top">
-              <span class="card-num">03</span>
-              <span class="card-arrow">↗</span>
-            </div>
-            <div>
-              <h3 class="card-title">RIDER FLEET</h3>
-              <p class="card-desc">Algorithmic turn-by-turn routing, spatial parcel batching, live shift payouts, and priority safety telemetry.</p>
-            </div>
-            <div class="card-footer">
-              <span>com.mshappido.rider</span>
-              <span style="color: #10B981;">● RELEASE VERIFIED</span>
-            </div>
+        <!-- Story Card 3 -->
+        <div class="story-card" onclick="window.location.href='#portals'">
+          <div class="story-top">
+            <span class="story-index">03 / FLEET DISPATCH</span>
+            <span class="story-arrow">↗</span>
+          </div>
+          <div>
+            <h3 class="story-title">RIDER RUNTIME</h3>
+            <p class="story-desc">Dynamic route geometry optimization, high-frequency GPS pinging, instantaneous shift payouts, and safety radar.</p>
+          </div>
+          <div class="story-meta">
+            <span>com.mshappido.rider</span>
+            <span style="color: #10B981;">● DEPLOYED</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Visual Production Gallery -->
-    <section class="section-stage" id="screens">
-      <div class="container">
-        <div class="section-title-bar">
-          <div>
-            <div class="section-counter">02 / INTERFACES</div>
-            <h2 class="section-heading">VISUAL SCREENS</h2>
+    <!-- Section 3: Visual Portals (Screens) -->
+    <section class="scroll-section" id="portals">
+      <div class="sec-kicker">02 / EXPERIENCE PORTALS</div>
+      
+      <h2 class="giant-title" style="font-size: clamp(2.8rem, 6vw, 5.5rem); margin-bottom: 20px;">
+        SPATIAL <em>INTERFACES</em>
+      </h2>
+      <p class="body-lead" style="margin-bottom: 20px;">
+        Designed with fluid micro-interactions, low-latency state machines, and tactile visual delight.
+      </p>
+
+      <div class="portals-row">
+        <div class="portal-box">
+          <div class="portal-screen">
+            <img src="app_slide1.png" alt="Discovery Interface">
           </div>
-          <div style="font-size: 0.85rem; letter-spacing: 2px; color: var(--dim); text-transform: uppercase;">
-            NATIVE EXPERIENCE
-          </div>
+          <div class="portal-head">01 · GOURMET DISCOVERY</div>
+          <div class="portal-caption">Onboarding & Menu Navigation</div>
         </div>
 
-        <div class="gallery-grid">
-          <div class="gallery-frame">
-            <div class="gallery-screen">
-              <img src="app_slide1.png" alt="Dining Discovery">
-            </div>
-            <div class="gallery-info">
-              <h4>01 · SMART DISCOVERY</h4>
-              <p>Onboarding and curated menu catalog</p>
-            </div>
+        <div class="portal-box">
+          <div class="portal-screen">
+            <img src="app_slide2.png" alt="Checkout Interface">
           </div>
+          <div class="portal-head">02 · FRICTIONLESS PAY</div>
+          <div class="portal-caption">Instant Checkout & Payment</div>
+        </div>
 
-          <div class="gallery-frame">
-            <div class="gallery-screen">
-              <img src="app_slide2.png" alt="Instant Checkout">
-            </div>
-            <div class="gallery-info">
-              <h4>02 · INSTANT CHECKOUT</h4>
-              <p>Tokenized digital payments & card rails</p>
-            </div>
+        <div class="portal-box">
+          <div class="portal-screen">
+            <img src="app_slide3.png" alt="Tracking Interface">
           </div>
-
-          <div class="gallery-frame">
-            <div class="gallery-screen">
-              <img src="app_slide3.png" alt="Live Telemetry">
-            </div>
-            <div class="gallery-info">
-              <h4>03 · LIVE GPS TRACKING</h4>
-              <p>High-frequency spatial delivery tracking</p>
-            </div>
-          </div>
+          <div class="portal-head">03 · REALTIME TELEMETRY</div>
+          <div class="portal-caption">Live Spatial GPS Delivery</div>
         </div>
       </div>
     </section>
 
-    <!-- Giant Editorial Statement Footer (Grubo Style) -->
-    <footer class="giant-footer">
-      <div class="container">
-        <h2 class="giant-headline">
-          LET'S MAKE IT<br>
-          <em>HAPPIDO.</em>
-        </h2>
+    <!-- Section 4: Giant Statement Footer -->
+    <footer class="contact-stage">
+      <h2 class="contact-huge">
+        LET'S MAKE IT<br>
+        <em>HAPPIDO.</em>
+      </h2>
 
-        <div class="contact-row">
-          <a href="mailto:support@happido.in" class="btn-contact-tile">
-            <span>support@happido.in</span>
-            <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
-          </a>
+      <div class="contact-links-grid">
+        <a href="mailto:support@happido.in" class="contact-slot">
+          <span>support@happido.in</span>
+          <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
+        </a>
 
-          <a href="mailto:happiido@gmail.com" class="btn-contact-tile">
-            <span>happiido@gmail.com</span>
-            <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
-          </a>
+        <a href="mailto:happiido@gmail.com" class="contact-slot">
+          <span>happiido@gmail.com</span>
+          <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
+        </a>
+      </div>
+
+      <div class="footer-bar">
+        <span>HAPPIDO / SPATIAL HYPERLOCAL DELIVERY</span>
+        <div style="display: flex; gap: 28px;">
+          <a href="privacy.html">PRIVACY POLICY</a>
+          <a href="delete-account.html">ACCOUNT DELETION</a>
+          <a href="terms.html">TERMS OF SERVICE</a>
         </div>
-
-        <div class="footer-bar">
-          <span>HAPPIDO / 3D HYPERLOCAL PLATFORM</span>
-          <div style="display: flex; gap: 28px;">
-            <a href="privacy.html">PRIVACY POLICY</a>
-            <a href="delete-account.html">ACCOUNT DELETION</a>
-            <a href="terms.html">TERMS OF SERVICE</a>
-          </div>
-          <span>© 2026 HAPPIDO TECHNOLOGIES</span>
-        </div>
+        <span>© 2026 HAPPIDO TECHNOLOGIES</span>
       </div>
     </footer>
 
   </div>
 
-  <!-- Interactive Three.js 3D Particle Cloud & Dynamic Spatial Geometry -->
+  <!-- Advanced Three.js + GSAP Scroll Engine (Exact Lorenzo Lottici Choreography) -->
   <script>
-    const canvas = document.getElementById('webgl-canvas');
+    // 1. Initialize Lenis Smooth Scrolling (Crucial for buttery 3D scroll sync)
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // 2. Setup Three.js Scene
+    const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
-    
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 40;
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 38);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // 1. Giant Floating 3D Geometric Torus Knot (Grubo 3D style)
-    const geometry = new THREE.TorusKnotGeometry(13, 3.8, 140, 32);
-    const wireframeMat = new THREE.MeshBasicMaterial({
+    // 3. 3D Master Object: Lorenzo's Polyhedral Dynamic Wireframe
+    const group3D = new THREE.Group();
+    scene.add(group3D);
+
+    // Outer Torus Wireframe (Hyper-geometry)
+    const geoTorus = new THREE.TorusKnotGeometry(12, 3.2, 160, 24);
+    const matTorus = new THREE.MeshBasicMaterial({
       color: 0x208AEF,
       wireframe: true,
       transparent: true,
-      opacity: 0.16
+      opacity: 0.18
     });
-    const torusKnot = new THREE.Mesh(geometry, wireframeMat);
-    torusKnot.position.set(16, 2, -10);
-    scene.add(torusKnot);
+    const meshTorus = new THREE.Mesh(geoTorus, matTorus);
+    group3D.add(meshTorus);
 
-    // 2. Inner Glowing Core
-    const innerGeo = new THREE.IcosahedronGeometry(7, 2);
-    const innerMat = new THREE.MeshBasicMaterial({
+    // Inner Glowing Core (Icosahedron)
+    const geoCore = new THREE.IcosahedronGeometry(6.5, 2);
+    const matCore = new THREE.MeshBasicMaterial({
       color: 0xFF5A36,
       wireframe: true,
       transparent: true,
-      opacity: 0.22
+      opacity: 0.28
     });
-    const innerSphere = new THREE.Mesh(innerGeo, innerMat);
-    innerSphere.position.set(16, 2, -10);
-    scene.add(innerSphere);
+    const meshCore = new THREE.Mesh(geoCore, matCore);
+    group3D.add(meshCore);
 
-    // 3. Thousands of Spatial Floating Particles (Constellation)
-    const particleCount = 1200;
-    const particleGeo = new THREE.BufferGeometry();
-    const posArray = new Float32Array(particleCount * 3);
+    // Surrounding Satellite Rings
+    const ringGeo = new THREE.RingGeometry(18, 18.2, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x38BDF8,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.25
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = Math.PI / 3;
+    group3D.add(ringMesh);
 
-    for (let i = 0; i < particleCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 120;
+    // 1500 Spatial Constellation Particles
+    const pCount = 1500;
+    const pGeo = new THREE.BufferGeometry();
+    const pCoords = new Float32Array(pCount * 3);
+
+    for (let i = 0; i < pCount * 3; i++) {
+      pCoords[i] = (Math.random() - 0.5) * 140;
     }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pCoords, 3));
 
-    const particleMat = new THREE.PointsMaterial({
+    const pMat = new THREE.PointsMaterial({
       size: 0.35,
       color: 0x38BDF8,
       transparent: true,
       opacity: 0.45,
       blending: THREE.AdditiveBlending
     });
-    const particleMesh = new THREE.Points(particleGeo, particleMat);
-    scene.add(particleMesh);
+    const pSystem = new THREE.Points(pGeo, pMat);
+    scene.add(pSystem);
 
-    // Mouse Interaction
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
+    // Mouse Coordinates for Realtime Parallax
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
 
     window.addEventListener('mousemove', (e) => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
 
-    // Scroll Reaction
-    let scrollY = 0;
-    window.addEventListener('scroll', () => {
-      scrollY = window.scrollY;
-    });
-
-    // Resize handler
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Animation Loop
+    // 4. GSAP ScrollTrigger 3D Choreography (The Lorenzo Scroll Effect)
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Connect Lenis to ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    // Timeline that controls 3D Camera, Rotation, and Position across sections
+    const tl3d = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".main-scroll-track",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.5,
+        onUpdate: (self) => {
+          // Update HUD Percent & Stage
+          const pct = Math.round(self.progress * 100);
+          document.getElementById('hud-pct').innerText = String(pct).padStart(3, '0') + '%';
+          
+          if (self.progress < 0.3) {
+            document.getElementById('hud-stage').innerText = '01 INTRO';
+          } else if (self.progress < 0.7) {
+            document.getElementById('hud-stage').innerText = '02 ARCHITECTURE';
+          } else {
+            document.getElementById('hud-stage').innerText = '03 INTERFACES';
+          }
+          
+          document.getElementById('hud-cam').innerText = 'Z: ' + camera.position.z.toFixed(1);
+        }
+      }
+    });
+
+    // Choreographing the 3D Object through the scroll:
+    // Move from right to left, rotate, zoom camera in and out!
+    tl3d
+      .to(group3D.position, { x: 14, y: -2, z: 5, ease: "none" }, 0)
+      .to(group3D.rotation, { x: 2.5, y: 3.2, z: 1.2, ease: "none" }, 0)
+      .to(camera.position, { z: 28, ease: "none" }, 0)
+      
+      // Mid scroll: Bring object closer, shift to left side
+      .to(group3D.position, { x: -12, y: 4, z: 12, ease: "none" }, 0.5)
+      .to(group3D.rotation, { x: 5.0, y: 6.8, z: 2.8, ease: "none" }, 0.5)
+      .to(camera.position, { z: 22, ease: "none" }, 0.5)
+      
+      // End scroll: Zoom out into deep cosmic space for footer
+      .to(group3D.position, { x: 0, y: -10, z: -25, ease: "none" }, 1)
+      .to(group3D.rotation, { x: 8.5, y: 11.2, z: 4.5, ease: "none" }, 1)
+      .to(camera.position, { z: 45, ease: "none" }, 1);
+
+    // 5. Continuous Render Loop with Mouse Interpolation
     const clock = new THREE.Clock();
 
-    function animate() {
-      requestAnimationFrame(animate);
+    function renderScene() {
+      requestAnimationFrame(renderScene);
 
-      const elapsedTime = clock.getElapsedTime();
+      const delta = clock.getElapsedTime();
 
-      // Smooth mouse interpolation
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
+      // Mouse smooth lerp
+      targetX += (mouseX - targetX) * 0.04;
+      targetY += (mouseY - targetY) * 0.04;
 
-      // Rotate 3D Torus Knot
-      torusKnot.rotation.x = elapsedTime * 0.25 + targetY * 0.5;
-      torusKnot.rotation.y = elapsedTime * 0.35 + targetX * 0.5;
+      // Subtle base rotation
+      meshTorus.rotation.y += 0.003;
+      meshCore.rotation.x += 0.005;
+      ringMesh.rotation.z += 0.002;
 
-      // Inner sphere counter rotation
-      innerSphere.rotation.x = -elapsedTime * 0.3;
-      innerSphere.rotation.y = -elapsedTime * 0.4;
+      // Mouse Parallax on Group
+      group3D.rotation.x += targetY * 0.01;
+      group3D.rotation.y += targetX * 0.01;
 
-      // Parallax camera movement with scroll & mouse
-      camera.position.x = targetX * 6;
-      camera.position.y = -targetY * 6 - (scrollY * 0.02);
-
-      // Particle subtle drifting
-      particleMesh.rotation.y = elapsedTime * 0.03;
-      particleMesh.rotation.x = -elapsedTime * 0.02;
+      // Particle Drift
+      pSystem.rotation.y = delta * 0.02;
 
       renderer.render(scene, camera);
     }
-    animate();
+    renderScene();
   </script>
 
 </body>
