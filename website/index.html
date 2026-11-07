@@ -1038,22 +1038,8 @@
         </div>
       </div>
 
-      <!-- Real Phone Device: Showing Food Screen 1 -->
-      <div class="story-device-wrapper" id="story-device">
-        <div class="device-phone">
-          <div class="device-notch"></div>
-          <img src="app_slide1.png" alt="Happido Food Ordering" class="device-screen-img" id="phone-screen-img">
-
-          <!-- Dynamic Badge -->
-          <div class="screen-floating-badge" id="phone-badge">
-            <div class="badge-icon-box bg-blue">⚡</div>
-            <div>
-              <div style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;" id="phone-badge-title">Order Dispatched</div>
-              <div style="font-size: 0.75rem; color: #94A3B8;" id="phone-badge-sub">Arriving in 18 Mins • Rider 0.4km away</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Pure 3D Canvas Showcase on the right: Unconstrained and immersive -->
+      <div class="story-3d-stage-spacer"></div>
     </section>
 
     <!-- ======================================================== -->
@@ -1106,20 +1092,8 @@
         </div>
       </div>
 
-      <!-- Device slot shows screen 2: Fast Checkout & Route Radar -->
-      <div class="story-device-wrapper">
-        <div class="device-phone">
-          <div class="device-notch"></div>
-          <img src="app_slide2.png" alt="Happido Ride Experience" class="device-screen-img">
-          <div class="screen-floating-badge">
-            <div class="badge-icon-box bg-orange">🛵</div>
-            <div>
-              <div style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;">Captain Assigned</div>
-              <div style="font-size: 0.75rem; color: #94A3B8;">Helmet Verified • 2.5 Mins to Gate</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Pure 3D Canvas Showcase on the right: Unconstrained and immersive -->
+      <div class="story-3d-stage-spacer"></div>
     </section>
 
     <!-- ======================================================== -->
@@ -1167,20 +1141,8 @@
         </div>
       </div>
 
-      <!-- Device slot shows screen 3: Pinpoint Map Tracking -->
-      <div class="story-device-wrapper">
-        <div class="device-phone">
-          <div class="device-notch"></div>
-          <img src="app_slide3.png" alt="Happido SOS Radar" class="device-screen-img">
-          <div class="screen-floating-badge">
-            <div class="badge-icon-box bg-red">❤️</div>
-            <div>
-              <div style="font-weight: 800; font-size: 0.95rem; color: #FFFFFF;">Donor En Route</div>
-              <div style="font-size: 0.75rem; color: #94A3B8;">O+ Match Verified • ETA 6 Mins</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Pure 3D Canvas Showcase on the right: Unconstrained and immersive -->
+      <div class="story-3d-stage-spacer"></div>
     </section>
 
     <!-- ======================================================== -->
@@ -1477,7 +1439,7 @@
 
     // 1. Photorealistic 3D Burger Mesh
     loadAlphaTexture('render_burger.jpg', (tex) => {
-      const geo = new THREE.PlaneGeometry(16, 16);
+      const geo = new THREE.PlaneGeometry(18.5, 18.5);
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -1485,15 +1447,15 @@
         depthWrite: false
       });
       meshBurger = new THREE.Mesh(geo, mat);
-      // Positioned right beside/behind the phone mockup so it is completely visible and stunning
-      meshBurger.position.set(6.5, 2.5, 1);
+      // Hero center-right focal point with delicious scale
+      meshBurger.position.set(11.0, 0.5, 2);
       meshBurger.rotation.set(-0.05, -0.15, 0.05);
       masterGroup.add(meshBurger);
     });
 
     // 2. Photorealistic 3D Pizza Slice Mesh
     loadAlphaTexture('render_pizza.jpg', (tex) => {
-      const geo = new THREE.PlaneGeometry(13, 13);
+      const geo = new THREE.PlaneGeometry(15.0, 15.0);
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -1501,14 +1463,14 @@
         depthWrite: false
       });
       meshPizza = new THREE.Mesh(geo, mat);
-      meshPizza.position.set(11.0, -7.0, 3);
+      meshPizza.position.set(16.5, -7.5, 4);
       meshPizza.rotation.set(0.1, -0.2, -0.1);
       masterGroup.add(meshPizza);
     });
 
     // 3. Photorealistic 3D Electric Urban Scooter Mesh
     loadAlphaTexture('render_scooter.jpg', (tex) => {
-      const geo = new THREE.PlaneGeometry(17, 17);
+      const geo = new THREE.PlaneGeometry(20.0, 20.0);
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -1516,14 +1478,14 @@
         depthWrite: false
       });
       meshScooter = new THREE.Mesh(geo, mat);
-      meshScooter.position.set(40, 0, -10); // Hidden offscreen until Chapter 2
+      meshScooter.position.set(45, 0, -10); // Hidden offscreen until Chapter 2
       meshScooter.rotation.set(0.05, -0.2, 0.02);
       masterGroup.add(meshScooter);
     });
 
     // 4. Photorealistic 3D Glowing Ruby Crystal Heart SOS Mesh
     loadAlphaTexture('render_heart_sos.jpg', (tex) => {
-      const geo = new THREE.PlaneGeometry(16, 16);
+      const geo = new THREE.PlaneGeometry(18.0, 18.0);
       const mat = new THREE.MeshBasicMaterial({
         map: tex,
         transparent: true,
@@ -1531,7 +1493,7 @@
         depthWrite: false
       });
       meshHeart = new THREE.Mesh(geo, mat);
-      meshHeart.position.set(40, 0, -15); // Hidden offscreen until Chapter 3
+      meshHeart.position.set(45, 0, -15); // Hidden offscreen until Chapter 3
       meshHeart.rotation.set(0, 0, 0);
       masterGroup.add(meshHeart);
     });
@@ -1599,10 +1561,8 @@
 
     // Animate the real 3D assets on scroll:
     tl3d
-      // Chapter 1 -> Chapter 2:
-      // Burger & Pizza slide away to the right/top, Scooter glides right into spotlight
       .to(masterGroup.position, { x: 0, y: 0, z: 0, ease: "none" }, 0)
-      .add(() => {}, 0.25)
+      .add(() => {}, 0.25);
 
     // Dynamic scroll timeline hooks
     ScrollTrigger.create({
@@ -1612,13 +1572,13 @@
       onEnter: () => {
         if (meshBurger) gsap.to(meshBurger.position, { x: 38, y: 15, z: -10, duration: 1.2, ease: "power2.out" });
         if (meshPizza) gsap.to(meshPizza.position, { x: 42, y: -18, z: -12, duration: 1.2, ease: "power2.out" });
-        if (meshScooter) gsap.to(meshScooter.position, { x: 6.5, y: 1.0, z: 2, duration: 1.2, ease: "power2.out" });
-        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: -5, z: -15, duration: 0.8 });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 10.5, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 45, y: -5, z: -15, duration: 0.8 });
       },
       onLeaveBack: () => {
-        if (meshBurger) gsap.to(meshBurger.position, { x: 6.5, y: 2.5, z: 1, duration: 1.2, ease: "power2.out" });
-        if (meshPizza) gsap.to(meshPizza.position, { x: 11.0, y: -7.0, z: 3, duration: 1.2, ease: "power2.out" });
-        if (meshScooter) gsap.to(meshScooter.position, { x: 40, y: 0, z: -10, duration: 1.0, ease: "power2.out" });
+        if (meshBurger) gsap.to(meshBurger.position, { x: 11.0, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
+        if (meshPizza) gsap.to(meshPizza.position, { x: 16.5, y: -7.5, z: 4, duration: 1.2, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 45, y: 0, z: -10, duration: 1.0, ease: "power2.out" });
       }
     });
 
@@ -1628,11 +1588,11 @@
       end: "bottom center",
       onEnter: () => {
         if (meshScooter) gsap.to(meshScooter.position, { x: -70, y: -20, z: -30, duration: 1.2, ease: "power2.out" });
-        if (meshHeart) gsap.to(meshHeart.position, { x: 6.5, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 11.0, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
       },
       onLeaveBack: () => {
-        if (meshScooter) gsap.to(meshScooter.position, { x: 6.5, y: 1.0, z: 2, duration: 1.2, ease: "power2.out" });
-        if (meshHeart) gsap.to(meshHeart.position, { x: 40, y: 0, z: -15, duration: 1.0, ease: "power2.out" });
+        if (meshScooter) gsap.to(meshScooter.position, { x: 10.5, y: 0.5, z: 2, duration: 1.2, ease: "power2.out" });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 45, y: 0, z: -15, duration: 1.0, ease: "power2.out" });
       }
     });
 
@@ -1643,7 +1603,7 @@
         if (meshHeart) gsap.to(meshHeart.position, { x: 0, y: -20, z: -25, duration: 1.2 });
       },
       onLeaveBack: () => {
-        if (meshHeart) gsap.to(meshHeart.position, { x: 6.5, y: 0.5, z: 2, duration: 1.2 });
+        if (meshHeart) gsap.to(meshHeart.position, { x: 11.0, y: 0.5, z: 2, duration: 1.2 });
       }
     });
 
