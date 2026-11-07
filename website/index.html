@@ -3,40 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070707">
-  <title>Happido — Spatial Hyperlocal Delivery Experience</title>
-  <meta name="description" content="Happido transforms food delivery, groceries, and fleet logistics into an interactive scroll-driven 3D universe.">
+  <meta name="theme-color" content="#030408">
+  <title>Happido — Taste the City in Minutes</title>
+  <meta name="description" content="Happido brings the city's finest dining and fresh groceries directly to your doorstep in minutes with real-time 3D tracking.">
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Three.js + GSAP + ScrollTrigger + Lenis Smooth Scrolling (Exact Stack of Lorenzo Lottici) -->
+  <!-- Core Libraries: Three.js + GSAP + ScrollTrigger + Lenis Smooth Scrolling -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
-  <!-- JetBrains Mono + Archivo + Syne: Italian Design Studio Typography -->
+  <!-- Modern Luxury Typefaces: Plus Jakarta Sans + Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --fondo: #070707;
-      --pietra: #0e1117;
-      --avorio: #F0EDE8;
-      --avorio-muted: #8E9BAE;
-      --avorio-dim: #4B5563;
-      --blue: #208AEF;
-      --cyan: #38BDF8;
-      --orange: #FF5A36;
-      --border-thin: rgba(240, 237, 232, 0.12);
-      --border-glow: rgba(32, 138, 239, 0.4);
+      --bg: #030408;
+      --surface: rgba(14, 19, 32, 0.65);
+      --surface-hover: rgba(22, 30, 50, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-border-glow: rgba(32, 138, 239, 0.5);
+      --primary: #208AEF;
+      --primary-light: #60A5FA;
+      --accent: #FF5A36;
+      --emerald: #10B981;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --blur: blur(24px);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -45,14 +49,14 @@
     }
 
     body {
-      background-color: var(--fondo);
-      color: var(--avorio);
-      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--bg);
+      color: var(--text);
       overflow-x: hidden;
       position: relative;
+      line-height: 1.6;
     }
 
-    /* Fixed Fullscreen WebGL 3D Canvas */
+    /* Fixed Fullscreen 3D WebGL Canvas */
     #canvas3d {
       position: fixed;
       top: 0;
@@ -63,7 +67,7 @@
       pointer-events: none;
     }
 
-    /* Lorenzo Paper Texture & Film Noise */
+    /* Cinematic Film Texture & Radial Vignette */
     .film-grain {
       position: fixed;
       top: 0;
@@ -72,7 +76,7 @@
       height: 100%;
       pointer-events: none;
       z-index: 999;
-      opacity: 0.045;
+      opacity: 0.035;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
@@ -84,427 +88,598 @@
       height: 100%;
       pointer-events: none;
       z-index: 2;
-      background: radial-gradient(circle at center, transparent 35%, rgba(7, 7, 7, 0.88) 100%);
+      background: radial-gradient(circle at center, transparent 35%, rgba(3, 4, 8, 0.85) 100%);
     }
 
-    /* Fixed Top Architectural Navigation (Lorenzo Style) */
+    /* Top Glass Header */
     .top-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 100;
-      padding: 20px 4vw;
+      padding: 18px 6%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(7, 7, 7, 0.6);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-thin);
+      background: rgba(3, 4, 8, 0.7);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--card-border);
     }
-    .brand-link {
+    .brand-wrap {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
-      color: var(--avorio);
+      color: var(--text);
     }
-    .brand-link img {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
+    .brand-wrap img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(32, 138, 239, 0.4);
     }
     .brand-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.25rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
       font-weight: 800;
       letter-spacing: -0.5px;
+      color: #FFFFFF;
     }
-    .header-coords {
-      font-size: 0.72rem;
-      letter-spacing: 1.8px;
-      color: var(--avorio-dim);
-      text-transform: uppercase;
+    .nav-pill-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--emerald);
     }
-    .header-menu {
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+    }
+    .header-nav {
       display: flex;
       align-items: center;
       gap: 28px;
     }
-    .header-menu a {
-      color: var(--avorio-muted);
+    .header-nav a {
+      color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.78rem;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
+      font-size: 0.88rem;
+      font-weight: 600;
       transition: color 0.2s;
     }
-    .header-menu a:hover {
-      color: var(--avorio);
+    .header-nav a:hover {
+      color: #FFFFFF;
     }
-    .btn-contact {
-      border: 1px solid var(--border-thin);
-      padding: 6px 16px;
-      border-radius: 4px;
-      color: var(--avorio) !important;
-      transition: all 0.2s !important;
+    .nav-cta-btn {
+      background: #FFFFFF;
+      color: #030408 !important;
+      padding: 8px 20px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .btn-contact:hover {
-      background: var(--avorio);
-      color: var(--fondo) !important;
+    .nav-cta-btn:hover {
+      background: var(--primary);
+      color: #FFFFFF !important;
+      box-shadow: 0 0 24px rgba(32, 138, 239, 0.6);
+      transform: translateY(-2px);
     }
 
-    /* Fixed Floating HUD Coordinates & Scroll Counter (Lorenzo Lottici Style) */
+    /* Fixed Lorenzo Style Floating HUD Indicator */
     .hud-left {
       position: fixed;
-      bottom: 30px;
+      bottom: 28px;
       left: 4vw;
       z-index: 50;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
-      letter-spacing: 2px;
-      color: var(--avorio-dim);
+      letter-spacing: 1.8px;
+      color: var(--text-dim);
       text-transform: uppercase;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
     .hud-left span {
-      color: var(--avorio);
+      color: var(--primary-light);
       font-weight: 700;
     }
     .hud-right {
       position: fixed;
-      bottom: 30px;
+      bottom: 28px;
       right: 4vw;
       z-index: 50;
-      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
       letter-spacing: 2px;
-      color: var(--blue);
+      color: var(--primary-light);
       font-weight: 700;
     }
 
-    /* Storytelling Scroll Canvas Sections */
-    .main-scroll-track {
+    /* Content Canvas */
+    .scroll-container {
       position: relative;
       z-index: 10;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 6%;
     }
 
-    .scroll-section {
+    /* Section 1: Hero View */
+    .hero-stage {
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 120px 8vw;
-      position: relative;
-    }
-
-    .sec-kicker {
-      font-size: 0.76rem;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .sec-kicker::before {
-      content: '';
-      width: 20px;
-      height: 1px;
-      background: var(--blue);
-    }
-
-    /* Lorenzo Giant Architectural Typographic Titles */
-    .giant-title {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(3.6rem, 9.5vw, 8.5rem);
-      font-weight: 900;
-      line-height: 0.9;
-      letter-spacing: -3.5px;
-      text-transform: uppercase;
-      color: var(--avorio);
-      margin-bottom: 40px;
-    }
-    .giant-title em {
-      font-style: normal;
-      color: var(--blue);
-      text-shadow: 0 0 50px rgba(32, 138, 239, 0.4);
-    }
-
-    .split-content {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
       gap: 60px;
-      align-items: flex-end;
+      padding: 120px 0 80px;
     }
-    .body-lead {
-      font-family: 'Archivo', sans-serif;
-      font-size: 1.3rem;
-      color: var(--avorio-muted);
-      line-height: 1.7;
-      max-width: 620px;
-    }
-    .body-lead strong {
-      color: var(--avorio);
-    }
-
-    /* Lorenzo Wireframe Action Buttons */
-    .action-group {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-    .btn-wire {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 16px;
-      background: var(--avorio);
-      color: var(--fondo);
-      text-decoration: none;
-      padding: 16px 36px;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 99px;
+      background: rgba(32, 138, 239, 0.12);
+      border: 1px solid rgba(32, 138, 239, 0.3);
+      color: var(--primary-light);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
       font-weight: 700;
-      font-size: 0.88rem;
       letter-spacing: 1px;
-      text-transform: uppercase;
-      border-radius: 4px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-bottom: 26px;
     }
-    .btn-wire:hover {
-      background: var(--blue);
+    .hero-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(3.6rem, 6.5vw, 6.2rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
       color: #FFFFFF;
-      transform: translateY(-4px);
-      box-shadow: 0 0 40px rgba(32, 138, 239, 0.6);
+      margin-bottom: 26px;
     }
-    .btn-wire svg {
-      width: 22px;
-      height: 22px;
+    .hero-heading .blue-word {
+      background: linear-gradient(135deg, #60A5FA 0%, #208AEF 50%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-heading .orange-word {
+      background: linear-gradient(135deg, #FF6B4A 0%, #FFA07A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 1.22rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 540px;
+      margin-bottom: 40px;
+      font-weight: 400;
     }
 
-    /* Interactive 3D Cards Matrix with Floating Wireframes */
-    .cards-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      margin-top: 50px;
-    }
-    .story-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-thin);
-      padding: 40px 32px;
-      border-radius: 12px;
-      backdrop-filter: blur(24px);
+    .hero-actions {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 400px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      cursor: pointer;
-    }
-    .story-card:hover {
-      border-color: var(--border-glow);
-      transform: translateY(-8px);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(32, 138, 239, 0.2);
-    }
-    .story-top {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      gap: 18px;
+      flex-wrap: wrap;
     }
-    .story-index {
-      font-size: 0.85rem;
+    .btn-google-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: #FFFFFF;
+      color: #030408;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 16px;
       font-weight: 700;
-      color: var(--blue);
-      letter-spacing: 1.5px;
+      font-size: 0.95rem;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 35px rgba(32, 138, 239, 0.35);
     }
-    .story-arrow {
-      font-size: 1.4rem;
-      color: var(--avorio-muted);
-      transition: transform 0.25s, color 0.25s;
+    .btn-google-play:hover {
+      background: var(--primary);
+      color: #FFFFFF;
+      transform: translateY(-3px);
+      box-shadow: 0 0 50px rgba(32, 138, 239, 0.7);
     }
-    .story-card:hover .story-arrow {
-      transform: translate(4px, -4px);
-      color: var(--avorio);
+    .btn-google-play svg {
+      width: 24px;
+      height: 24px;
     }
-    .story-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.85rem;
+    .btn-explore-text {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 16px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .btn-explore-text:hover {
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    /* Hero Right: Real 3D Device Presentation */
+    .hero-device-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .device-phone {
+      width: 320px;
+      height: 640px;
+      background: #0E1322;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), 0 0 60px rgba(32, 138, 239, 0.2);
+      position: relative;
+      overflow: hidden;
+      transform: perspective(1000px) rotateY(-8deg) rotateX(4deg);
+      transition: transform 0.4s ease;
+    }
+    .device-phone:hover {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-8px);
+    }
+    .device-notch {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 20px;
+      background: #0E1322;
+      border-radius: 12px;
+      z-index: 10;
+    }
+    .device-screen-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Floating Realtime Delivery Card */
+    .floating-hud-widget {
+      position: absolute;
+      bottom: 40px;
+      left: -30px;
+      background: rgba(14, 20, 35, 0.85);
+      border: 1px solid var(--card-border-glow);
+      backdrop-filter: var(--blur);
+      border-radius: 20px;
+      padding: 18px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: floatWidget 5s ease-in-out infinite alternate;
+      z-index: 20;
+    }
+    @keyframes floatWidget {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+    .hud-icon-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(32, 138, 239, 0.2);
+      color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .hud-stat-bold {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
       font-weight: 800;
-      color: var(--avorio);
-      letter-spacing: -0.5px;
+      color: #FFFFFF;
+    }
+    .hud-stat-label {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      font-weight: 600;
       text-transform: uppercase;
-      margin-bottom: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Section 2: Interactive Ecosystem Cards */
+    .section-view {
+      padding: 120px 0;
+      border-top: 1px solid var(--card-border);
+    }
+    .section-head {
+      margin-bottom: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .sec-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #FFFFFF;
       line-height: 1.1;
     }
-    .story-desc {
-      font-family: 'Archivo', sans-serif;
-      font-size: 0.95rem;
-      color: var(--avorio-muted);
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-    .story-meta {
-      padding-top: 18px;
-      border-top: 1px solid var(--border-thin);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--avorio-dim);
-    }
 
-    /* Spatial Screen Portals */
-    .portals-row {
+    .ecosystem-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 32px;
-      margin-top: 60px;
+      perspective: 1200px;
     }
-    .portal-box {
-      border: 1px solid var(--border-thin);
-      border-radius: 12px;
-      background: rgba(14, 17, 23, 0.5);
-      backdrop-filter: blur(20px);
-      padding: 16px;
-      transition: all 0.4s;
+    .eco-glass-card {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 44px 34px;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
     }
-    .portal-box:hover {
-      border-color: var(--avorio);
-      transform: translateY(-6px);
+    .eco-glass-card:hover {
+      background: var(--surface-hover);
+      border-color: var(--card-border-glow);
+      transform: translateY(-10px) rotateX(4deg) rotateY(-4deg);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(32, 138, 239, 0.2);
     }
-    .portal-screen {
+    .card-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .card-badge-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 99px;
+    }
+    .pill-blue { background: rgba(32, 138, 239, 0.15); color: #60A5FA; border: 1px solid rgba(32, 138, 239, 0.3); }
+    .pill-orange { background: rgba(255, 90, 54, 0.15); color: #FB923C; border: 1px solid rgba(255, 90, 54, 0.3); }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .card-arrow {
+      font-size: 1.5rem;
+      color: var(--text-dim);
+      transition: transform 0.25s, color 0.25s;
+    }
+    .eco-glass-card:hover .card-arrow {
+      transform: translate(4px, -4px);
+      color: #FFFFFF;
+    }
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+    .card-body-text {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+    .card-bottom-meta {
+      padding-top: 20px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--text-dim);
+    }
+    .verified-tag {
+      color: var(--emerald);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Section 3: Visual App Experience Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .gallery-card {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      backdrop-filter: var(--blur);
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+    }
+    .gallery-img-box {
       width: 100%;
-      height: 460px;
-      border-radius: 8px;
+      height: 480px;
+      border-radius: 16px;
       overflow: hidden;
       background: #000;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
-    .portal-screen img {
+    .gallery-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .portal-box:hover .portal-screen img {
-      transform: scale(1.04);
+    .gallery-card:hover .gallery-img-box img {
+      transform: scale(1.05);
     }
-    .portal-head {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.15rem;
+    .gallery-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
       font-weight: 800;
-      letter-spacing: -0.3px;
-      text-transform: uppercase;
-      color: var(--avorio);
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
       margin-bottom: 4px;
     }
-    .portal-caption {
-      font-size: 0.75rem;
-      letter-spacing: 1.2px;
-      color: var(--avorio-dim);
-      text-transform: uppercase;
+    .gallery-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
     }
 
-    /* Massive Editorial Contact Section */
-    .contact-stage {
-      padding: 140px 8vw 60px;
-      border-top: 1px solid var(--border-thin);
-      background: #030406;
+    /* Section 4: Giant Statement Footer */
+    .giant-footer-section {
+      border-top: 1px solid var(--card-border);
+      padding: 120px 0 60px;
+      background: #010204;
     }
-    .contact-huge {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(3.5rem, 8.5vw, 8rem);
+    .footer-statement-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(3.2rem, 8vw, 7.5rem);
       font-weight: 900;
-      line-height: 0.92;
+      line-height: 0.95;
       letter-spacing: -3px;
       text-transform: uppercase;
-      color: var(--avorio);
-      margin-bottom: 60px;
+      color: #FFFFFF;
+      margin-bottom: 50px;
     }
-    .contact-huge em {
-      font-style: normal;
-      color: var(--blue);
-      text-shadow: 0 0 60px rgba(32, 138, 239, 0.6);
+    .footer-statement-title span {
+      background: linear-gradient(135deg, #208AEF 0%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 60px rgba(32, 138, 239, 0.4);
     }
-    .contact-links-grid {
+
+    .contact-tiles-row {
       display: flex;
-      gap: 28px;
-      margin-bottom: 100px;
+      gap: 24px;
+      margin-bottom: 80px;
       flex-wrap: wrap;
     }
-    .contact-slot {
+    .contact-slot-btn {
       display: inline-flex;
       align-items: center;
-      gap: 24px;
-      padding: 24px 36px;
-      border: 1px solid var(--border-thin);
-      border-radius: 8px;
+      gap: 20px;
+      padding: 22px 34px;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
       background: rgba(255, 255, 255, 0.02);
       text-decoration: none;
-      color: var(--avorio);
-      font-size: 1.15rem;
-      font-weight: 600;
+      color: #FFFFFF;
+      font-size: 1.2rem;
+      font-weight: 700;
       transition: all 0.3s;
     }
-    .contact-slot:hover {
-      border-color: var(--blue);
-      background: rgba(32, 138, 239, 0.08);
+    .contact-slot-btn:hover {
+      border-color: var(--primary);
+      background: rgba(32, 138, 239, 0.1);
+      box-shadow: 0 0 40px rgba(32, 138, 239, 0.3);
       transform: translateY(-3px);
     }
-    .contact-slot svg {
+    .contact-slot-btn svg {
       width: 24px;
       height: 24px;
       stroke: currentColor;
     }
 
-    .footer-bar {
-      border-top: 1px solid var(--border-thin);
-      padding-top: 40px;
+    .footer-legal-bar {
+      border-top: 1px solid var(--card-border);
+      padding-top: 36px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
-      font-size: 0.74rem;
-      letter-spacing: 1.5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--avorio-dim);
+      color: var(--text-dim);
     }
-    .footer-bar a {
-      color: var(--avorio-muted);
+    .footer-legal-bar a {
+      color: var(--text-muted);
       text-decoration: none;
       transition: color 0.2s;
     }
-    .footer-bar a:hover {
-      color: var(--avorio);
+    .footer-legal-bar a:hover {
+      color: #FFFFFF;
     }
 
-    @media (max-width: 960px) {
-      .split-content {
+    @media (max-width: 1024px) {
+      .hero-stage {
         grid-template-columns: 1fr;
+        text-align: center;
       }
-      .cards-row, .portals-row {
+      .hero-desc {
+        margin: 0 auto 36px;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+      .hero-device-wrapper {
+        margin-top: 40px;
+      }
+      .floating-hud-widget {
+        left: 10px;
+      }
+      .ecosystem-grid, .gallery-grid {
         grid-template-columns: 1fr;
-      }
-      .top-header .header-coords {
-        display: none;
       }
     }
     @media (max-width: 600px) {
-      .top-header .header-menu {
+      .header-nav {
         display: none;
       }
-      .giant-title, .contact-huge {
-        font-size: 3.2rem;
-        letter-spacing: -1.5px;
+      .hero-heading {
+        font-size: 3rem;
+        letter-spacing: -1px;
       }
-      .contact-links-grid {
+      .contact-tiles-row {
         flex-direction: column;
       }
     }
@@ -512,37 +687,38 @@
 </head>
 <body>
 
-  <!-- Fullscreen 3D Scene Canvas -->
+  <!-- Fullscreen Three.js WebGL 3D Canvas -->
   <canvas id="canvas3d"></canvas>
 
-  <!-- Film Noise & Edge Vignette -->
+  <!-- Film Noise Texture & Lighting Vignette -->
   <div class="film-grain"></div>
   <div class="vignette"></div>
 
-  <!-- Top Fixed Header -->
+  <!-- Top Glass Header -->
   <header class="top-header">
-    <a href="index.html" class="brand-link">
+    <a href="index.html" class="brand-wrap">
       <img src="logo.png" alt="Happido">
-      <span class="brand-title">HAPPIDO</span>
+      <span class="brand-title">Happido</span>
     </a>
 
-    <div class="header-coords">
-      [ 12° 58' N · 77° 35' E ] HYPERLOCAL 3D
+    <div class="nav-pill-status">
+      <div class="status-dot"></div>
+      ACTIVE RELEASE TRACK v1.0.0
     </div>
 
-    <nav class="header-menu">
-      <a href="#architecture">SYSTEM</a>
-      <a href="#portals">INTERFACES</a>
-      <a href="privacy.html">PRIVACY</a>
-      <a href="delete-account.html">DELETION</a>
-      <a href="contact.html" class="btn-contact">CONTACT ↗</a>
+    <nav class="header-nav">
+      <a href="#ecosystem">Ecosystem</a>
+      <a href="#interfaces">App Screens</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="delete-account.html">Account Deletion</a>
+      <a href="contact.html" class="nav-cta-btn">Support ↗</a>
     </nav>
   </header>
 
-  <!-- Floating HUD Indicators (Lorenzo Style) -->
+  <!-- Lorenzo Lottici Style Real-time Floating HUD -->
   <div class="hud-left">
-    <div>STAGE / <span id="hud-stage">01 INTRO</span></div>
-    <div>CAM / <span id="hud-cam">Z: 38.0</span></div>
+    <div>STAGE / <span id="hud-stage">01 DISCOVERY</span></div>
+    <div>SPATIAL CAM / <span id="hud-cam">Z: 38.0</span></div>
   </div>
 
   <div class="hud-right" id="hud-pct">
@@ -550,178 +726,199 @@
   </div>
 
   <!-- Smooth Scrollable Track Container -->
-  <div class="main-scroll-track">
+  <div class="scroll-container">
 
-    <!-- Section 1: Intro / Spatial Launch -->
-    <section class="scroll-section" id="hero">
-      <div class="sec-kicker">SPATIAL LOGISTICS ENGINE</div>
-      
-      <h1 class="giant-title">
-        WE DELIVER<br>
-        <em>INTO SPACE.</em>
-      </h1>
+    <!-- Section 1: Hero Stage -->
+    <section class="hero-stage">
+      <div>
+        <div class="hero-badge">
+          HYPERLOCAL FOOD & LOGISTICS ENGINE
+        </div>
 
-      <div class="split-content">
-        <p class="body-lead">
-          Happido bends time and distance. We orchestrate restaurant culinary arts, grocery depots, and high-precision routing across an interactive 3D universe.
+        <h1 class="hero-heading">
+          Taste the City <br>
+          in <span class="blue-word">Minutes</span>
+        </h1>
+
+        <p class="hero-desc">
+          Happido orchestrates cuisine from celebrated local kitchens, fresh groceries, and autonomous delivery logistics into one ultra-reliable platform.
         </p>
 
-        <div class="action-group">
-          <a href="#architecture" class="btn-wire">
+        <div class="hero-actions">
+          <a href="#ecosystem" class="btn-google-play">
             <svg viewBox="0 0 24 24">
               <path fill="#4285F4" d="M3.6 1.8L13.8 12 3.6 22.2c-.3-.3-.6-.8-.6-1.8V3.6c0-1 .3-1.5.6-1.8z"/>
               <path fill="#FBBC04" d="M17.3 8.6L13.8 12l3.5 3.4 3.9-2.2c1.1-.6 1.1-1.7 0-2.3l-3.9-2.3z"/>
               <path fill="#EA4335" d="M3.6 1.8l10.2 10.2 3.5-3.4L6.4 2.4C5.8 2 5.1 1.8 4.5 1.8c-.3 0-.6 0-.9 0z"/>
               <path fill="#34A853" d="M3.6 22.2l13.7-6.8-3.5-3.4L3.6 22.2z"/>
             </svg>
-            <span>GET IT ON PLAY STORE</span>
+            <span>GET IT ON GOOGLE PLAY</span>
           </a>
-          <span style="font-size: 0.72rem; letter-spacing: 2px; color: var(--avorio-dim); font-weight: 700;">
-            ● PRODUCTION CODE: COM.MSHAPPIDO.CUSTOMER
-          </span>
+
+          <a href="#ecosystem" class="btn-explore-text">
+            Explore 3 Apps &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Real Phone Device with Real App Onboarding -->
+      <div class="hero-device-wrapper">
+        <div class="device-phone">
+          <div class="device-notch"></div>
+          <img src="app_slide1.png" alt="Happido App" class="device-screen-img">
+        </div>
+
+        <!-- Floating UI Metric Widget -->
+        <div class="floating-hud-widget">
+          <div class="hud-icon-bubble">⚡</div>
+          <div>
+            <div class="hud-stat-bold">22 Mins Average</div>
+            <div class="hud-stat-label">Doorstep Drop Time</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Section 2: Architecture / 3D Floating Geometry Morph -->
-    <section class="scroll-section" id="architecture">
-      <div class="sec-kicker">01 / THREE-TIER RUNTIME</div>
-      
-      <h2 class="giant-title" style="font-size: clamp(2.8rem, 6vw, 5.5rem); margin-bottom: 20px;">
-        TRIAD <em>ARCHITECTURE</em>
-      </h2>
-      <p class="body-lead" style="margin-bottom: 40px;">
-        Three dedicated engines synchronizing inventory, dispatch queues, and customer orders at 60 FPS.
-      </p>
+    <!-- Section 2: Architecture Tiles -->
+    <section class="section-view" id="ecosystem">
+      <div class="section-head">
+        <div>
+          <div class="sec-tag">01 / ARCHITECTURE</div>
+          <h2 class="sec-title">Three Native Engines</h2>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
+          SYNCED AT 60 FPS
+        </div>
+      </div>
 
-      <div class="cards-row">
-        <!-- Story Card 1 -->
-        <div class="story-card" onclick="window.location.href='#portals'">
-          <div class="story-top">
-            <span class="story-index">01 / DINING & CARTS</span>
-            <span class="story-arrow">↗</span>
+      <div class="ecosystem-grid">
+        <!-- Customer Card -->
+        <div class="eco-glass-card" onclick="window.location.href='#interfaces'">
+          <div class="card-top-bar">
+            <span class="card-badge-pill pill-blue">Customers</span>
+            <span class="card-arrow">↗</span>
           </div>
           <div>
-            <h3 class="story-title">CUSTOMER ENGINE</h3>
-            <p class="story-desc">Exploration of artisan menus, sub-second cart checkout, live GPS delivery radar, and instant UPI payment settlements.</p>
+            <h3 class="card-title">Happido Customer</h3>
+            <p class="card-body-text">Curated dining discovery, instant grocery carts, turn-by-turn map radar, and frictionless payments.</p>
           </div>
-          <div class="story-meta">
+          <div class="card-bottom-meta">
             <span>com.mshappido.customer</span>
-            <span style="color: #10B981;">● DEPLOYED</span>
+            <span class="verified-tag">● Release Ready</span>
           </div>
         </div>
 
-        <!-- Story Card 2 -->
-        <div class="story-card" onclick="window.location.href='#portals'">
-          <div class="story-top">
-            <span class="story-index">02 / MERCHANT PORTAL</span>
-            <span class="story-arrow">↗</span>
+        <!-- Partner Card -->
+        <div class="eco-glass-card" onclick="window.location.href='#interfaces'">
+          <div class="card-top-bar">
+            <span class="card-badge-pill pill-orange">Merchants</span>
+            <span class="card-arrow">↗</span>
           </div>
           <div>
-            <h3 class="story-title">RESTAURANT SUITE</h3>
-            <p class="story-desc">Live kitchen display pipelines, menu catalog toggle switches, surge triggers, and multi-location revenue metrics.</p>
+            <h3 class="card-title">Happido Partner</h3>
+            <p class="card-body-text">Live kitchen display workflows, menu catalog controls, surge triggers, and daily revenue reporting.</p>
           </div>
-          <div class="story-meta">
+          <div class="card-bottom-meta">
             <span>com.mshappido.restaurant</span>
-            <span style="color: #10B981;">● DEPLOYED</span>
+            <span class="verified-tag">● Release Ready</span>
           </div>
         </div>
 
-        <!-- Story Card 3 -->
-        <div class="story-card" onclick="window.location.href='#portals'">
-          <div class="story-top">
-            <span class="story-index">03 / FLEET DISPATCH</span>
-            <span class="story-arrow">↗</span>
+        <!-- Rider Card -->
+        <div class="eco-glass-card" onclick="window.location.href='#interfaces'">
+          <div class="card-top-bar">
+            <span class="card-badge-pill pill-green">Delivery Fleet</span>
+            <span class="card-arrow">↗</span>
           </div>
           <div>
-            <h3 class="story-title">RIDER RUNTIME</h3>
-            <p class="story-desc">Dynamic route geometry optimization, high-frequency GPS pinging, instantaneous shift payouts, and safety radar.</p>
+            <h3 class="card-title">Happido Rider</h3>
+            <p class="card-body-text">Dynamic route geometry optimization, GPS navigation overlay, instant shift payout settlements, and SOS.</p>
           </div>
-          <div class="story-meta">
+          <div class="card-bottom-meta">
             <span>com.mshappido.rider</span>
-            <span style="color: #10B981;">● DEPLOYED</span>
+            <span class="verified-tag">● Release Ready</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section 3: Visual Portals (Screens) -->
-    <section class="scroll-section" id="portals">
-      <div class="sec-kicker">02 / EXPERIENCE PORTALS</div>
-      
-      <h2 class="giant-title" style="font-size: clamp(2.8rem, 6vw, 5.5rem); margin-bottom: 20px;">
-        SPATIAL <em>INTERFACES</em>
-      </h2>
-      <p class="body-lead" style="margin-bottom: 20px;">
-        Designed with fluid micro-interactions, low-latency state machines, and tactile visual delight.
-      </p>
+    <!-- Section 3: High-Res Interface Gallery -->
+    <section class="section-view" id="interfaces">
+      <div class="section-head">
+        <div>
+          <div class="sec-tag">02 / VISUAL EXPERIENCES</div>
+          <h2 class="sec-title">Inside the App</h2>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
+          REAL APPLICATION CAPTURES
+        </div>
+      </div>
 
-      <div class="portals-row">
-        <div class="portal-box">
-          <div class="portal-screen">
-            <img src="app_slide1.png" alt="Discovery Interface">
+      <div class="gallery-grid">
+        <div class="gallery-card">
+          <div class="gallery-img-box">
+            <img src="app_slide1.png" alt="Gourmet Discovery">
           </div>
-          <div class="portal-head">01 · GOURMET DISCOVERY</div>
-          <div class="portal-caption">Onboarding & Menu Navigation</div>
+          <h4 class="gallery-title">Smart Dining Discovery</h4>
+          <p class="gallery-sub">Personalized restaurant curation & dietary filters</p>
         </div>
 
-        <div class="portal-box">
-          <div class="portal-screen">
-            <img src="app_slide2.png" alt="Checkout Interface">
+        <div class="gallery-card">
+          <div class="gallery-img-box">
+            <img src="app_slide2.png" alt="Fast Checkout">
           </div>
-          <div class="portal-head">02 · FRICTIONLESS PAY</div>
-          <div class="portal-caption">Instant Checkout & Payment</div>
+          <h4 class="gallery-title">Swift Cashless Checkout</h4>
+          <p class="gallery-sub">UPI, debit cards, and digital wallet integrations</p>
         </div>
 
-        <div class="portal-box">
-          <div class="portal-screen">
-            <img src="app_slide3.png" alt="Tracking Interface">
+        <div class="gallery-card">
+          <div class="gallery-img-box">
+            <img src="app_slide3.png" alt="Live Tracking">
           </div>
-          <div class="portal-head">03 · REALTIME TELEMETRY</div>
-          <div class="portal-caption">Live Spatial GPS Delivery</div>
+          <h4 class="gallery-title">Live Pinpoint Tracking</h4>
+          <p class="gallery-sub">High-frequency GPS rider map telemetry</p>
         </div>
       </div>
     </section>
 
     <!-- Section 4: Giant Statement Footer -->
-    <footer class="contact-stage">
-      <h2 class="contact-huge">
+    <footer class="giant-footer-section">
+      <h2 class="footer-statement-title">
         LET'S MAKE IT<br>
-        <em>HAPPIDO.</em>
+        <span>HAPPIDO.</span>
       </h2>
 
-      <div class="contact-links-grid">
-        <a href="mailto:support@happido.in" class="contact-slot">
+      <div class="contact-tiles-row">
+        <a href="mailto:support@happido.in" class="contact-slot-btn">
           <span>support@happido.in</span>
           <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
         </a>
 
-        <a href="mailto:happiido@gmail.com" class="contact-slot">
+        <a href="mailto:happiido@gmail.com" class="contact-slot-btn">
           <span>happiido@gmail.com</span>
           <svg viewBox="0 0 32 32" fill="none"><path d="M7 25L25 7M10 7h15v15" stroke-width="2.5" stroke-linecap="square"/></svg>
         </a>
       </div>
 
-      <div class="footer-bar">
-        <span>HAPPIDO / SPATIAL HYPERLOCAL DELIVERY</span>
-        <div style="display: flex; gap: 28px;">
+      <div class="footer-legal-bar">
+        <span>HAPPIDO TECHNOLOGIES PRIVATE LIMITED</span>
+        <div style="display: flex; gap: 24px;">
           <a href="privacy.html">PRIVACY POLICY</a>
           <a href="delete-account.html">ACCOUNT DELETION</a>
           <a href="terms.html">TERMS OF SERVICE</a>
         </div>
-        <span>© 2026 HAPPIDO TECHNOLOGIES</span>
+        <span>© 2026 HAPPIDO</span>
       </div>
     </footer>
 
   </div>
 
-  <!-- Advanced Three.js + GSAP Scroll Engine (Exact Lorenzo Lottici Choreography) -->
+  <!-- Advanced Three.js + GSAP Scroll Engine Choreography -->
   <script>
-    // 1. Initialize Lenis Smooth Scrolling (Crucial for buttery 3D scroll sync)
+    // 1. Lenis Smooth Scrolling
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
       smoothWheel: true
     });
 
@@ -731,7 +928,7 @@
     }
     requestAnimationFrame(raf);
 
-    // 2. Setup Three.js Scene
+    // 2. Three.js Scene Setup
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
 
@@ -742,45 +939,45 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // 3. 3D Master Object: Lorenzo's Polyhedral Dynamic Wireframe
+    // 3. 3D Master Group: Vibrant Glowing Polyhedral Geometry
     const group3D = new THREE.Group();
     scene.add(group3D);
 
-    // Outer Torus Wireframe (Hyper-geometry)
+    // Outer Torus Knot
     const geoTorus = new THREE.TorusKnotGeometry(12, 3.2, 160, 24);
     const matTorus = new THREE.MeshBasicMaterial({
       color: 0x208AEF,
       wireframe: true,
       transparent: true,
-      opacity: 0.18
+      opacity: 0.25
     });
     const meshTorus = new THREE.Mesh(geoTorus, matTorus);
     group3D.add(meshTorus);
 
-    // Inner Glowing Core (Icosahedron)
+    // Glowing Core
     const geoCore = new THREE.IcosahedronGeometry(6.5, 2);
     const matCore = new THREE.MeshBasicMaterial({
       color: 0xFF5A36,
       wireframe: true,
       transparent: true,
-      opacity: 0.28
+      opacity: 0.35
     });
     const meshCore = new THREE.Mesh(geoCore, matCore);
     group3D.add(meshCore);
 
-    // Surrounding Satellite Rings
+    // Dynamic Orbit Rings
     const ringGeo = new THREE.RingGeometry(18, 18.2, 64);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x38BDF8,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.25
+      opacity: 0.3
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.rotation.x = Math.PI / 3;
     group3D.add(ringMesh);
 
-    // 1500 Spatial Constellation Particles
+    // 1500 Glowing Spatial Particles
     const pCount = 1500;
     const pGeo = new THREE.BufferGeometry();
     const pCoords = new Float32Array(pCount * 3);
@@ -791,16 +988,16 @@
     pGeo.setAttribute('position', new THREE.BufferAttribute(pCoords, 3));
 
     const pMat = new THREE.PointsMaterial({
-      size: 0.35,
-      color: 0x38BDF8,
+      size: 0.4,
+      color: 0x60A5FA,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.5,
       blending: THREE.AdditiveBlending
     });
     const pSystem = new THREE.Points(pGeo, pMat);
     scene.add(pSystem);
 
-    // Mouse Coordinates for Realtime Parallax
+    // Mouse Parallax Trackers
     let mouseX = 0, mouseY = 0;
     let targetX = 0, targetY = 0;
 
@@ -815,33 +1012,30 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // 4. GSAP ScrollTrigger 3D Choreography (The Lorenzo Scroll Effect)
+    // 4. GSAP ScrollTrigger 3D Camera Scrubbing
     gsap.registerPlugin(ScrollTrigger);
 
-    // Connect Lenis to ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
 
-    // Timeline that controls 3D Camera, Rotation, and Position across sections
     const tl3d = gsap.timeline({
       scrollTrigger: {
-        trigger: ".main-scroll-track",
+        trigger: ".scroll-container",
         start: "top top",
         end: "bottom bottom",
         scrub: 1.5,
         onUpdate: (self) => {
-          // Update HUD Percent & Stage
           const pct = Math.round(self.progress * 100);
           document.getElementById('hud-pct').innerText = String(pct).padStart(3, '0') + '%';
           
-          if (self.progress < 0.3) {
-            document.getElementById('hud-stage').innerText = '01 INTRO';
-          } else if (self.progress < 0.7) {
+          if (self.progress < 0.33) {
+            document.getElementById('hud-stage').innerText = '01 HERO DISCOVERY';
+          } else if (self.progress < 0.66) {
             document.getElementById('hud-stage').innerText = '02 ARCHITECTURE';
           } else {
-            document.getElementById('hud-stage').innerText = '03 INTERFACES';
+            document.getElementById('hud-stage').innerText = '03 APP SCREENS';
           }
           
           document.getElementById('hud-cam').innerText = 'Z: ' + camera.position.z.toFixed(1);
@@ -849,50 +1043,43 @@
       }
     });
 
-    // Choreographing the 3D Object through the scroll:
-    // Move from right to left, rotate, zoom camera in and out!
+    // 3D Motion Choreography
     tl3d
-      .to(group3D.position, { x: 14, y: -2, z: 5, ease: "none" }, 0)
-      .to(group3D.rotation, { x: 2.5, y: 3.2, z: 1.2, ease: "none" }, 0)
-      .to(camera.position, { z: 28, ease: "none" }, 0)
+      .to(group3D.position, { x: 12, y: -2, z: 6, ease: "none" }, 0)
+      .to(group3D.rotation, { x: 2.2, y: 3.0, z: 1.0, ease: "none" }, 0)
+      .to(camera.position, { z: 30, ease: "none" }, 0)
       
-      // Mid scroll: Bring object closer, shift to left side
-      .to(group3D.position, { x: -12, y: 4, z: 12, ease: "none" }, 0.5)
-      .to(group3D.rotation, { x: 5.0, y: 6.8, z: 2.8, ease: "none" }, 0.5)
-      .to(camera.position, { z: 22, ease: "none" }, 0.5)
+      .to(group3D.position, { x: -14, y: 3, z: 12, ease: "none" }, 0.5)
+      .to(group3D.rotation, { x: 5.2, y: 6.5, z: 2.4, ease: "none" }, 0.5)
+      .to(camera.position, { z: 24, ease: "none" }, 0.5)
       
-      // End scroll: Zoom out into deep cosmic space for footer
-      .to(group3D.position, { x: 0, y: -10, z: -25, ease: "none" }, 1)
-      .to(group3D.rotation, { x: 8.5, y: 11.2, z: 4.5, ease: "none" }, 1)
-      .to(camera.position, { z: 45, ease: "none" }, 1);
+      .to(group3D.position, { x: 0, y: -8, z: -20, ease: "none" }, 1)
+      .to(group3D.rotation, { x: 8.0, y: 10.5, z: 4.0, ease: "none" }, 1)
+      .to(camera.position, { z: 42, ease: "none" }, 1);
 
-    // 5. Continuous Render Loop with Mouse Interpolation
+    // 5. Render Loop with Smooth Inertia
     const clock = new THREE.Clock();
 
-    function renderScene() {
-      requestAnimationFrame(renderScene);
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
 
       const delta = clock.getElapsedTime();
 
-      // Mouse smooth lerp
       targetX += (mouseX - targetX) * 0.04;
       targetY += (mouseY - targetY) * 0.04;
 
-      // Subtle base rotation
       meshTorus.rotation.y += 0.003;
       meshCore.rotation.x += 0.005;
       ringMesh.rotation.z += 0.002;
 
-      // Mouse Parallax on Group
-      group3D.rotation.x += targetY * 0.01;
-      group3D.rotation.y += targetX * 0.01;
+      group3D.rotation.x += targetY * 0.008;
+      group3D.rotation.y += targetX * 0.008;
 
-      // Particle Drift
-      pSystem.rotation.y = delta * 0.02;
+      pSystem.rotation.y = delta * 0.015;
 
       renderer.render(scene, camera);
     }
-    renderScene();
+    renderLoop();
   </script>
 
 </body>
